@@ -48,7 +48,7 @@ void drawBuildings() {
 }
 
 // Draw Cube
-void drawCube() {
+void drawCube(float size = 0.5f) {
     // OK, let's start drawing our planer quads.
     glBegin(GL_QUADS); 
 
@@ -56,101 +56,101 @@ void drawCube() {
     glNormal3f( 0.0f, 0.0f,-1.0f);
     glColor4f(0.0, 1.0, 0.0, 0.0); // no opacity
 
-    glTexCoord2f(0.995f, 0.005f); glVertex3f(-0.5f, -0.5f, -0.5f); //TL
-    glTexCoord2f(0.995f, 0.995f); glVertex3f(-0.5f,  0.5f, -0.5f); //TR
-    glTexCoord2f(0.005f, 0.995f); glVertex3f( 0.5f,  0.5f, -0.5f); //BR
-    glTexCoord2f(0.005f, 0.005f); glVertex3f( 0.5f, -0.5f, -0.5f); //BL
+    glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size, -size); //TL
+    glTexCoord2f(0.995f, 0.995f); glVertex3f(-size,  size, -size); //TR
+    glTexCoord2f(0.005f, 0.995f); glVertex3f( size,  size, -size); //BR
+    glTexCoord2f(0.005f, 0.005f); glVertex3f( size, -size, -size); //BL
 
     // Right face.  Blue
     glNormal3f( 1.0f, 0.0f, 0.0f);
     glColor4f(0.0, 0.0, 1.0, 0.0); // no opacity
 
-    glTexCoord2f(0.005f, 0.995f); glVertex3f( 0.5f,  0.5f,  0.5f); // TL
-    glTexCoord2f(0.005f, 0.005f); glVertex3f( 0.5f, -0.5f,  0.5f); // BL
-    glTexCoord2f(0.995f, 0.005f); glVertex3f( 0.5f, -0.5f, -0.5f); // BR
-    glTexCoord2f(0.995f, 0.995f); glVertex3f( 0.5f,  0.5f, -0.5f); // TR
+    glTexCoord2f(0.005f, 0.995f); glVertex3f( size,  size,  size); // TL
+    glTexCoord2f(0.005f, 0.005f); glVertex3f( size, -size,  size); // BL
+    glTexCoord2f(0.995f, 0.005f); glVertex3f( size, -size, -size); // BR
+    glTexCoord2f(0.995f, 0.995f); glVertex3f( size,  size, -size); // TR
     
     // Front face; offset. Red
     glNormal3f( 0.0f, 0.0f, 1.0f);
     glColor4f( 1.0f, 0.0f, 0.0f, 0.0f);
 
-    glTexCoord2f( 0.995f, 0.005f); glVertex3f( 0.5f, -0.5f,  0.5f); // BR
-    glTexCoord2f( 0.995f, 0.995f); glVertex3f( 0.5f,  0.5f,  0.5f); // TR
-    glTexCoord2f( 0.005f, 0.995f); glVertex3f(-0.5f,  0.5f,  0.5f); // TL
-    glTexCoord2f( 0.005f, 0.005f); glVertex3f(-0.5f, -0.5f,  0.5f); // BL
+    glTexCoord2f( 0.995f, 0.005f); glVertex3f( size, -size,  size); // BR
+    glTexCoord2f( 0.995f, 0.995f); glVertex3f( size,  size,  size); // TR
+    glTexCoord2f( 0.005f, 0.995f); glVertex3f(-size,  size,  size); // TL
+    glTexCoord2f( 0.005f, 0.005f); glVertex3f(-size, -size,  size); // BL
 
     // Left Face; offset.  Yellow
     glNormal3f(-1.0f, 0.0f, 0.0f);  
     glColor4f(0.9,0.9,0.2,0.0);
 
-    glTexCoord2f(0.995f, 0.005f); glVertex3f(-0.5f, -0.5f,  0.5f); //BR
-    glTexCoord2f(0.995f, 0.995f); glVertex3f(-0.5f,  0.5f,  0.5f); //TR
-    glTexCoord2f(0.005f, 0.995f); glVertex3f(-0.5f,  0.5f, -0.5f); //TL
-    glTexCoord2f(0.005f, 0.005f); glVertex3f(-0.5f, -0.5f, -0.5f); //BL
+    glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size,  size); //BR
+    glTexCoord2f(0.995f, 0.995f); glVertex3f(-size,  size,  size); //TR
+    glTexCoord2f(0.005f, 0.995f); glVertex3f(-size,  size, -size); //TL
+    glTexCoord2f(0.005f, 0.005f); glVertex3f(-size, -size, -size); //BL
 
     // Top Face. Orange
     glNormal3f(0.0f, 1.0f, 0.0f);
     glColor4f(1.0f, 0.5f, 0.0f, 0.0f); 
 
-    glTexCoord2f(0.005f, 0.005f); glVertex3f( -0.5f, 0.5f,  0.5f); // front left - BL
-    glTexCoord2f(0.995f, 0.005f); glVertex3f( 0.5f, 0.5f, 0.5f); // front right - BR
-    glTexCoord2f(0.995f, 0.995f); glVertex3f( 0.5f, 0.5f,  -0.5f); // rear right - TR
-    glTexCoord2f(0.005f, 0.995f); glVertex3f( -0.5f, 0.5f, -0.5f); // rear left - TL
+    glTexCoord2f(0.005f, 0.005f); glVertex3f( -size, size,  size); // front left - BL
+    glTexCoord2f(0.995f, 0.005f); glVertex3f( size, size, size); // front right - BR
+    glTexCoord2f(0.995f, 0.995f); glVertex3f( size, size,  -size); // rear right - TR
+    glTexCoord2f(0.005f, 0.995f); glVertex3f( -size, size, -size); // rear left - TL
 
     // Bottom Face. Purple
     glNormal3f(0.0f, -1.0f, 0.0f);
     glColor4f(1.0f, 0.0f, 1.0f, 0.0f);
 
-    glTexCoord2f(0.005f, 0.995f); glVertex3f( -0.5f, -0.5f, -0.5f); // rear left - TL
-    glTexCoord2f(0.995f, 0.995f); glVertex3f( 0.5f, -0.5f, -0.5f); // rear left - TR
-    glTexCoord2f(0.995f, 0.005f); glVertex3f( 0.5f, -0.5f, 0.5f); // front right - BR
-    glTexCoord2f(0.005f, 0.005f); glVertex3f( -0.5f, -0.5f, 0.5f); // front left - BL
+    glTexCoord2f(0.005f, 0.995f); glVertex3f( -size, -size, -size); // rear left - TL
+    glTexCoord2f(0.995f, 0.995f); glVertex3f( size, -size, -size); // rear left - TR
+    glTexCoord2f(0.995f, 0.005f); glVertex3f( size, -size, size); // front right - BR
+    glTexCoord2f(0.005f, 0.005f); glVertex3f( -size, -size, size); // front left - BL
 
     // All polygons have been drawn.
     glEnd();
 }
 
-void drawPyramid() {
+void drawPyramid(float size = 0.5f) {
 glBegin(GL_TRIANGLES);
     //Triangle 1
     glColor3f(1.0f,0.0f,0.0f); // Red face
-    glVertex3f( 0.0f, 0.5f, 0.0f);   //V0
-    glVertex3f(-0.5f,-0.5f, 0.5f);   //V1
-    glVertex3f( 0.5f,-0.5f, 0.5f);   //V2
+    glVertex3f( 0.0f, size, 0.0f);   //V0
+    glVertex3f(-size,-size, size);   //V1
+    glVertex3f( size,-size, size);   //V2
     //Triangle 2
     glColor3f(0.0f,1.0f,0.0f); // Green face
-    glVertex3f( 0.0f, 0.5f, 0.0f);   //V0
-    glVertex3f( 0.5f,-0.5f, 0.5f);   //V2
-    glVertex3f( 0.5f,-0.5f,-0.5f);   //V3
+    glVertex3f( 0.0f, size, 0.0f);   //V0
+    glVertex3f( size,-size, size);   //V2
+    glVertex3f( size,-size,-size);   //V3
     //Triangle 3
     glColor3f(0.0f,0.0f, 1.0f); // Blue face
-    glVertex3f( 0.0f, 0.5f, 0.0f);   //V0 
-    glVertex3f( 0.5f,-0.5f,-0.5f);   //V3
-    glVertex3f(-0.5f,-0.5f,-0.5f);   //V4
+    glVertex3f( 0.0f, size, 0.0f);   //V0 
+    glVertex3f( size,-size,-size);   //V3
+    glVertex3f(-size,-size,-size);   //V4
     //Triangle 4
     glColor3f(0.5f,0.0f,0.5f);  // Purple face
-    glVertex3f( 0.0f, 0.5f, 0.0f);   //V0
-    glVertex3f(-0.5f,-0.5f,-0.5f);   //V4
-    glVertex3f(-0.5f,-0.5f, 0.5f);   //V1
+    glVertex3f( 0.0f, size, 0.0f);   //V0
+    glVertex3f(-size,-size,-size);   //V4
+    glVertex3f(-size,-size, size);   //V1
     //Triangle 5
     glColor3f(1.0f,1.0f,0.0f);  // Yellow face
-    glVertex3f( 0.5f, -0.5f, 0.5f); //BR
-    glVertex3f(-0.5f,-0.5f, -0.5f);   //TL
-    glVertex3f(0.5f,-0.5f,-0.5f);  //TR
+    glVertex3f( size, -size, size); //BR
+    glVertex3f(-size,-size, -size);   //TL
+    glVertex3f(size,-size,-size);  //TR
     //Triangle 6
     glColor3f(1.0f,1.0f,0.0f);  // Yellow face
-    glVertex3f( -0.5f, -0.5f, 0.5f);   //BL
-    glVertex3f(-0.5f,-0.5f, -0.5f);   //TL
-    glVertex3f(0.5f,-0.5f, 0.5f);   //BR
+    glVertex3f( -size, -size, size);   //BL
+    glVertex3f(-size,-size, -size);   //TL
+    glVertex3f(size,-size, size);   //BR
 glEnd();
 }
 
 // draws a solid sphere
-void drawSphere() {
+void drawSphere(float size = 0.5f) {
     glColor3f(1.0f,0.0f,0.0f); // Red ball
     GLUquadric *quad;
     quad = gluNewQuadric();
-    gluSphere(quad,0.5f,100,20);
+    gluSphere(quad,size,100,20);
 }
 
 //******************************************************//
