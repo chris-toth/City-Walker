@@ -9,7 +9,7 @@ LIBRARIES = -lX11 -lglut -lGL -lGLU -lm
 
 All: robotgame
 
-robotgame: robotgame.o drawobjects.o
+robotgame: robotgame.o
 	$(CC) $(CFLAGS) -o $@ $(LIBDIR) $< $(LIBRARIES)
 
 clean:

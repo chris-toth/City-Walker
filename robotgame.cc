@@ -29,59 +29,6 @@ static void PrintString(void *font, char *str)
       glutBitmapCharacter(font,*str++);
 }
 
-void display(void) {
-    char buf[160];
-
-    // set clear color to gray and clear window
-    glClearColor(0.5f, 0.5f, 0.5f, 1);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-    // Set up ortho view
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-	//glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
-    gluPerspective(45.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
-
-    // Switch to modelview for drawing
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-    // Set up camera
-	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
-    
-    // draw cube
-    glPushMatrix();
-    glTranslatef(0.0f,0.0f, 2.5f);
-    drawCube();
-    glPopMatrix();
-
-    // draw pyramid
-    glPushMatrix();
-    glTranslatef(0, 0, -2.5f);
-    drawPyramid();
-	glPopMatrix();
-
-    // draw sphere
-	glPushMatrix();
-    glTranslatef(0, 0.6f, 0.0f);
-    glColor3f(0.5f,0.25f,0.5f); glutWireSphere(1.00, 100, 100);
-	glPopMatrix();
-
-    // Display help string
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
-    glColor4f(0.6,1.0,0.6,1.00);
-    sprintf(buf,"%s", DISPLAY_MOUSE_INFO); // Print the string into a buffer
-    glWindowPos2i(3,20);                         // Set the coordinate
-    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
-    sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
-    glWindowPos2i(3,3);                         // Set the coordinate
-    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
-    glPopMatrix();
-
-	glutSwapBuffers();
-}
-
 //******************************************************//
 //                   DRAW OBJECTS HERE                  //
 //******************************************************//
@@ -283,6 +230,59 @@ void functionCallback(int key, int x, int y) {
     else { // face forward
         //TODO
     }
+}
+
+void display(void) {
+    char buf[160];
+
+    // set clear color to gray and clear window
+    glClearColor(0.5f, 0.5f, 0.5f, 1);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    // Set up ortho view
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity ();
+	//glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
+    gluPerspective(45.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
+
+    // Switch to modelview for drawing
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+    // Set up camera
+	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
+    
+    // draw cube
+    glPushMatrix();
+    glTranslatef(0.0f,0.0f, 2.5f);
+    drawCube();
+    glPopMatrix();
+
+    // draw pyramid
+    glPushMatrix();
+    glTranslatef(0, 0, -2.5f);
+    drawPyramid();
+	glPopMatrix();
+
+    // draw sphere
+	glPushMatrix();
+    glTranslatef(0, 0.6f, 0.0f);
+    glColor3f(0.5f,0.25f,0.5f); glutWireSphere(1.00, 100, 100);
+	glPopMatrix();
+
+    // Display help string
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
+    glColor4f(0.6,1.0,0.6,1.00);
+    sprintf(buf,"%s", DISPLAY_MOUSE_INFO); // Print the string into a buffer
+    glWindowPos2i(3,20);                         // Set the coordinate
+    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
+    sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
+    glWindowPos2i(3,3);                         // Set the coordinate
+    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
+    glPopMatrix();
+
+	glutSwapBuffers();
 }
 
 int main(int argc, char** argv)
