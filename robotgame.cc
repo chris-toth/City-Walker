@@ -16,9 +16,9 @@ int Window_Width = 800;
 int Window_Height = 600;
 
 // eye variables
-float eyex = 5.0f;
-float eyey = 5.0f;
-float eyez = 5.0f;
+float eyex = -3.5f;
+float eyey = 2.5f;
+float eyez = -3.5f;
 
 // Function for string rendering
 static void PrintString(void *font, char *str)
@@ -34,32 +34,55 @@ static void PrintString(void *font, char *str)
 //******************************************************//
 // Draw street 
 void drawStreet() {
-
+    //TODO
 }
 
 // Draw robot 
 void drawRobot() {
-
+    //TODO
 }
 
 // Draw buildings
 void drawBuildings() {
+    //TODO
+}
 
+// Temporary grid for visualizing movement
+void drawGrid() {
+    for (int i = 0; i < 40; i++) {
+        glPushMatrix();
+
+        if (i < 20) {
+            glTranslatef(0, 0 , i);
+        }
+        else if (i >= 20) {
+            glTranslatef(i-20, 0, 0);
+            glRotatef(-90, 0, 1, 0);
+        }
+
+        glBegin(GL_LINES);
+        glColor3f(0.0, 0.0, 0.0);
+        glLineWidth(1);
+        glVertex3f(0, -0.1, 0);
+        glVertex3f(19, -0.1, 0);
+        glEnd();
+
+        glPopMatrix();
+    }
 }
 
 // Draw Cube
 void drawCube(float size = 0.5f) {
-    // OK, let's start drawing our planer quads.
     glBegin(GL_QUADS); 
 
     // Far face.  Green
     glNormal3f( 0.0f, 0.0f,-1.0f);
     glColor4f(0.0, 1.0, 0.0, 0.0); // no opacity
 
-    glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size, -size); //TL
-    glTexCoord2f(0.995f, 0.995f); glVertex3f(-size,  size, -size); //TR
-    glTexCoord2f(0.005f, 0.995f); glVertex3f( size,  size, -size); //BR
-    glTexCoord2f(0.005f, 0.005f); glVertex3f( size, -size, -size); //BL
+    glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size, -size); // TL
+    glTexCoord2f(0.995f, 0.995f); glVertex3f(-size,  size, -size); // TR
+    glTexCoord2f(0.005f, 0.995f); glVertex3f( size,  size, -size); // BR
+    glTexCoord2f(0.005f, 0.005f); glVertex3f( size, -size, -size); // BL
 
     // Right face.  Blue
     glNormal3f( 1.0f, 0.0f, 0.0f);
@@ -83,10 +106,10 @@ void drawCube(float size = 0.5f) {
     glNormal3f(-1.0f, 0.0f, 0.0f);  
     glColor4f(0.9,0.9,0.2,0.0);
 
-    glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size,  size); //BR
-    glTexCoord2f(0.995f, 0.995f); glVertex3f(-size,  size,  size); //TR
-    glTexCoord2f(0.005f, 0.995f); glVertex3f(-size,  size, -size); //TL
-    glTexCoord2f(0.005f, 0.005f); glVertex3f(-size, -size, -size); //BL
+    glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size,  size); // BR
+    glTexCoord2f(0.995f, 0.995f); glVertex3f(-size,  size,  size); // TR
+    glTexCoord2f(0.005f, 0.995f); glVertex3f(-size,  size, -size); // TL
+    glTexCoord2f(0.005f, 0.005f); glVertex3f(-size, -size, -size); // BL
 
     // Top Face. Orange
     glNormal3f(0.0f, 1.0f, 0.0f);
@@ -146,11 +169,21 @@ glEnd();
 }
 
 // draws a solid sphere
-void drawSphere(float size = 0.5f) {
-    glColor3f(1.0f,0.0f,0.0f); // Red ball
+void drawSphere(float size = 0.5f, 
+                float r = 0.5f, float g = 0.5f, float b = 0.5f) {
+    glColor3f(r, g, b);
     GLUquadric *quad;
     quad = gluNewQuadric();
     gluSphere(quad,size,100,20);
+}
+
+// Draw cylinder
+void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f, 
+             float r = 0.5f, float g = 0.0f, float b = 0.5f) {
+    glColor3f(r, g, b);
+    GLUquadric *quad;
+    quad = gluNewQuadric();
+    gluCylinder(quad, base, top, height, 100, 20);
 }
 
 //******************************************************//
@@ -243,31 +276,22 @@ void display(void) {
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	//glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
-    gluPerspective(45.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
+    gluPerspective(60.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
 
     // Switch to modelview for drawing
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
     // Set up camera
 	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
+
+    // draw grid
+    drawGrid();
     
     // draw cube
     glPushMatrix();
-    glTranslatef(0.0f,0.0f, 2.5f);
-    drawCube();
+    glTranslatef(1.0f, 0.5f, 1.0f);
+    drawCube(0.5);
     glPopMatrix();
-
-    // draw pyramid
-    glPushMatrix();
-    glTranslatef(0, 0, -2.5f);
-    drawPyramid();
-	glPopMatrix();
-
-    // draw sphere
-	glPushMatrix();
-    glTranslatef(0, 0.6f, 0.0f);
-    glColor3f(0.5f,0.25f,0.5f); glutWireSphere(1.00, 100, 100);
-	glPopMatrix();
 
     // Display help string
     glPushMatrix();
@@ -300,7 +324,7 @@ int main(int argc, char** argv)
     glutSpecialFunc(functionCallback);
 
 	glEnable(GL_DEPTH_TEST); // enable depth testing
-    glCullFace(GL_BACK); 
-    glEnable(GL_CULL_FACE); // back face culling enabled
+    //glCullFace(GL_BACK); 
+    //glEnable(GL_CULL_FACE); // back face culling enabled
 	glutMainLoop();
 }
