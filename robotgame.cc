@@ -16,13 +16,12 @@ int Window_Width = 800;
 int Window_Height = 600;
 
 // eye variables
-float eyex = -3.5f;
-float eyey = 2.5f;
-float eyez = -3.5f;
+float eyex = -3.0f;
+float eyey = 2.0f;
+float eyez = -1.0f;
 
 // Function for string rendering
-static void PrintString(void *font, char *str)
-{
+static void PrintString(void *font, char *str) {
    int i,len=strlen(str);
 
    for(i=0;i < len; i++)
@@ -32,9 +31,115 @@ static void PrintString(void *font, char *str)
 //******************************************************//
 //                   DRAW OBJECTS HERE                  //
 //******************************************************//
+// single road tile
+void drawDashedLine() {
+    glPushMatrix();
+    glColor3f(1.0,1.0,1.0);
+    // dashed line
+    glBegin(GL_QUADS);
+        glVertex3f(1.0f,0.0f,4.0f);
+        glVertex3f(1.1f,0.0f,4.0f);
+        glVertex3f(1.1f,0.0f,3.00f);
+        glVertex3f(1.0f,0.0f,3.00f);
+    glEnd();
+    glBegin(GL_QUADS);
+        glVertex3f(1.0f,0.0f,2.50f);
+        glVertex3f(1.1f,0.0f,2.50f);
+        glVertex3f(1.1f,0.0f,1.50f);
+        glVertex3f(1.0f,0.0f,1.50f);
+    glEnd();
+    glBegin(GL_QUADS);
+        glVertex3f(1.0f,0.0f,1.00f);
+        glVertex3f(1.1f,0.0f,1.00f);
+        glVertex3f(1.1f,0.0f,0.00f);
+        glVertex3f(1.0f,0.0f,0.00f);
+    glEnd();
+}
+
+void drawRoadSurface() {
+    glColor3f(0.25,0.25,0.25);
+    // road surface
+    glBegin(GL_QUADS);
+        glVertex3f(0.5f,-0.01f,4.00f);
+        glVertex3f(1.7f,-0.01f,4.00f);
+        glVertex3f(1.7f,-0.01f,0.00f);
+        glVertex3f(0.5f,-0.01f,0.00f);
+    glEnd();
+    glPopMatrix();
+}
+
+void drawOuterRoad() {
+    glColor3f(0.25,0.25,0.25);
+    // road surface
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f,-0.02f,4.00f);
+        glVertex3f(2.2f,-0.02f,4.00f);
+        glVertex3f(2.2f,-0.02f,0.00f);
+        glVertex3f(0.0f,-0.02f,0.00f);
+    glEnd();
+    glPopMatrix();
+}
+
+void drawGrass() {
+    glColor3f(0.0,0.25,0.0);
+    // road surface
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f,-0.03f,80.00f);
+        glVertex3f(80.0f,-0.03f,80.00f);
+        glVertex3f(80.0f,-0.03f,0.00f);
+        glVertex3f(0.0f,-0.03f,0.00f);
+    glEnd();
+    glPopMatrix();
+}
+
 // Draw street 
 void drawStreet() {
-    //TODO
+    glPushMatrix();
+    for (float i = 0.0f; i < 20; i++) {
+        glPushMatrix();
+        glTranslatef(4*i, 0.0f, 0.0f);
+        for (float j = 0.0f; j < 20; j++) {
+            glPushMatrix();
+            glTranslatef(0.0f, 0.0f, 4*j);
+            drawDashedLine();
+            drawRoadSurface();
+            glPopMatrix();
+        }
+        glPopMatrix();
+    }
+    glPopMatrix();
+
+    glPushMatrix();
+    for (float i = 0.0f; i < 20; i++) {
+        glPushMatrix();
+        glTranslatef(0.0f, 0.0f, 4*i);
+        glRotatef(90,0.0,1.0,0.0);
+        for (float j = 0.0f; j < 20; j++) {
+            glPushMatrix();
+            glTranslatef(0.0f, 0.0f, 4*j);
+            drawDashedLine();
+            drawRoadSurface();
+            glPopMatrix();
+        }
+        glPopMatrix();
+    }
+    drawGrass();
+    glPopMatrix();
+
+    // outer roads
+    for (float i = 0.0f; i < 20; i++) {
+        glPushMatrix();
+        glTranslatef(0.0f, 0.0f, 4*i);
+        drawOuterRoad();
+        glPopMatrix();
+    }
+    for (float i = 0.0f; i < 20; i++) {
+        glPushMatrix();
+        glTranslatef(4*i, 0.0f, 0.0f);
+        glRotatef(90,0.0,1.0,0.0);
+        drawOuterRoad();
+        glPopMatrix();
+    }
 }
 
 // Draw robot 
@@ -45,30 +150,6 @@ void drawRobot() {
 // Draw buildings
 void drawBuildings() {
     //TODO
-}
-
-// Temporary grid for visualizing movement
-void drawGrid() {
-    for (int i = 0; i < 40; i++) {
-        glPushMatrix();
-
-        if (i < 20) {
-            glTranslatef(0, 0 , i);
-        }
-        else if (i >= 20) {
-            glTranslatef(i-20, 0, 0);
-            glRotatef(-90, 0, 1, 0);
-        }
-
-        glBegin(GL_LINES);
-        glColor3f(0.0, 0.0, 0.0);
-        glLineWidth(1);
-        glVertex3f(0, -0.1, 0);
-        glVertex3f(19, -0.1, 0);
-        glEnd();
-
-        glPopMatrix();
-    }
 }
 
 // Draw Cube
@@ -269,14 +350,14 @@ void display(void) {
     char buf[160];
 
     // set clear color to gray and clear window
-    glClearColor(0.5f, 0.5f, 0.5f, 1);
+    glClearColor(0.2f, 0.4f, 1.0f, 1);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     // Set up ortho view
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	//glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
-    gluPerspective(60.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
+    gluPerspective(90.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
 
     // Switch to modelview for drawing
 	glMatrixMode(GL_MODELVIEW);
@@ -285,13 +366,14 @@ void display(void) {
 	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
 
     // draw grid
-    drawGrid();
+    drawStreet();  
     
     // draw cube
     glPushMatrix();
-    glTranslatef(1.0f, 0.5f, 1.0f);
-    drawCube(0.5);
+    glTranslatef(1.0f, 0.5f, -1.0f);
+    drawCube(0.25);
     glPopMatrix();
+    //*/
 
     // Display help string
     glPushMatrix();
