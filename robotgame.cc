@@ -3,7 +3,7 @@
 #define DISPLAY_KEY_INFO "Keyboard control information here?"
 
 #include <stdlib.h>  // Useful for the following includes.
-#include <stdio.h>    
+#include <stdio.h>
 #include <string.h>  // For string operations.
 
 #include <GL/gl.h>   // OpenGL itself.
@@ -15,8 +15,13 @@ int Window_ID;
 int Window_Width = 800;
 int Window_Height = 600;
 
+// character starting position
+float charX = 0.0f;
+float charY = 0.0f;
+float charZ = 0.0f;
+
 // eye variables
-float eyex = -3.0f;
+float eyex = -1.0f;
 float eyey = 2.0f;
 float eyez = -1.0f;
 
@@ -92,7 +97,7 @@ void drawGrass() {
     glPopMatrix();
 }
 
-// Draw street 
+// Draw street
 void drawStreet() {
     glPushMatrix();
     for (float i = 0.0f; i < 20; i++) {
@@ -142,11 +147,6 @@ void drawStreet() {
     }
 }
 
-// Draw robot 
-void drawRobot() {
-    //TODO
-}
-
 // Draw buildings
 void drawBuildings() {
     //TODO
@@ -154,7 +154,7 @@ void drawBuildings() {
 
 // Draw Cube
 void drawCube(float size = 0.5f) {
-    glBegin(GL_QUADS); 
+    glBegin(GL_QUADS);
 
     // Far face.  Green
     glNormal3f( 0.0f, 0.0f,-1.0f);
@@ -173,7 +173,7 @@ void drawCube(float size = 0.5f) {
     glTexCoord2f(0.005f, 0.005f); glVertex3f( size, -size,  size); // BL
     glTexCoord2f(0.995f, 0.005f); glVertex3f( size, -size, -size); // BR
     glTexCoord2f(0.995f, 0.995f); glVertex3f( size,  size, -size); // TR
-    
+
     // Front face; offset. Red
     glNormal3f( 0.0f, 0.0f, 1.0f);
     glColor4f( 1.0f, 0.0f, 0.0f, 0.0f);
@@ -184,7 +184,7 @@ void drawCube(float size = 0.5f) {
     glTexCoord2f( 0.005f, 0.005f); glVertex3f(-size, -size,  size); // BL
 
     // Left Face; offset.  Yellow
-    glNormal3f(-1.0f, 0.0f, 0.0f);  
+    glNormal3f(-1.0f, 0.0f, 0.0f);
     glColor4f(0.9,0.9,0.2,0.0);
 
     glTexCoord2f(0.995f, 0.005f); glVertex3f(-size, -size,  size); // BR
@@ -194,7 +194,7 @@ void drawCube(float size = 0.5f) {
 
     // Top Face. Orange
     glNormal3f(0.0f, 1.0f, 0.0f);
-    glColor4f(1.0f, 0.5f, 0.0f, 0.0f); 
+    glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
 
     glTexCoord2f(0.005f, 0.005f); glVertex3f( -size, size,  size); // front left - BL
     glTexCoord2f(0.995f, 0.005f); glVertex3f( size, size, size); // front right - BR
@@ -228,7 +228,7 @@ glBegin(GL_TRIANGLES);
     glVertex3f( size,-size,-size);   //V3
     //Triangle 3
     glColor3f(0.0f,0.0f, 1.0f); // Blue face
-    glVertex3f( 0.0f, size, 0.0f);   //V0 
+    glVertex3f( 0.0f, size, 0.0f);   //V0
     glVertex3f( size,-size,-size);   //V3
     glVertex3f(-size,-size,-size);   //V4
     //Triangle 4
@@ -250,7 +250,7 @@ glEnd();
 }
 
 // draws a solid sphere
-void drawSphere(float size = 0.5f, 
+void drawSphere(float size = 0.5f,
                 float r = 0.5f, float g = 0.5f, float b = 0.5f) {
     glColor3f(r, g, b);
     GLUquadric *quad;
@@ -259,7 +259,7 @@ void drawSphere(float size = 0.5f,
 }
 
 // Draw cylinder
-void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f, 
+void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
              float r = 0.5f, float g = 0.0f, float b = 0.5f) {
     glColor3f(r, g, b);
     GLUquadric *quad;
@@ -267,6 +267,113 @@ void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
     gluCylinder(quad, base, top, height, 100, 20);
 }
 
+// Draw robot
+void drawRobot() {
+    /*
+    * Drawing the robot from the bottom up starting with the body.
+    * Adding in parts from the bottom up and translating
+    * parts to the proper location.
+    */
+    // draw body
+    glPushMatrix();
+    glTranslatef(charX, charY + 0.5f, charZ);
+    glScalef(0.5f, 1.0f, 0.5f);
+    drawCube(0.5f);
+    glPopMatrix();
+
+    // draw body details
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+    glVertex3f(0.2f, 0.8f, -0.26f);
+    glVertex3f(-0.2f, 0.8f, -0.26f);
+    glVertex3f(-0.2f, 0.2f, -0.26f);
+    glVertex3f(0.2f, 0.2f, -0.26f);
+    glEnd();
+
+    glPushMatrix();
+    glBegin(GL_TRIANGLES);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+    glVertex3f(0.0f, 0.85f , 0.26f);
+    glVertex3f(0.2f, 0.55f, 0.26f);
+    glVertex3f(-0.2f, 0.55f, 0.26f);
+    glEnd();
+    glPopMatrix();
+    glPushMatrix();
+    glBegin(GL_TRIANGLES);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+    glVertex3f(0.0f, 0.55f , 0.26f);
+    glVertex3f(0.2f, 0.25f, 0.26f);
+    glVertex3f(-0.2f, 0.25f, 0.26f);
+    glEnd();
+    glPopMatrix();
+
+    // draw neck
+    glPushMatrix();
+    glTranslatef(0.0f, 1.0f, 0.0f);
+    glRotatef(-90, 1.0f, 0.0f, 0.0f);
+    drawCylinder(0.15f, 0.15f, 0.09f, 1.0f, 0.5f, 1.0f);
+    glPopMatrix();
+
+    // draw head
+    glPushMatrix();
+    glTranslatef(0.0f, 1.25f, 0.0f);
+    drawCube(0.16f);
+    glPopMatrix();
+
+    // draw eyes and antenna
+    glPushMatrix();
+    glTranslatef(-0.07f, 1.26f, -0.18f);
+    glutSolidSphere(0.04, 20, 20);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.07f, 1.26f, -0.18f);
+    glutSolidSphere(0.04, 20, 20);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.0f, 1.28f, 0.0f);
+    glRotatef(-90, 1, 0, 0);
+    drawCylinder(0.05f, 0.05f, 0.3f, 0.0f, 1.0f, 1.0f);
+    glPopMatrix();
+}
+
+/**
+* Draw lines to help visualize the origin and each axis
+* By default,
+* Z axis line = green
+* X axis line = red
+* y axis line = blue
+*/
+void drawAxisLines(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax) {
+    // draw Z axis
+    glPushMatrix();
+    glBegin(GL_LINES);
+    glColor4f(0.0f, 1.0f, 0.0f, 1.0f); // GREEN
+    glVertex3f(0.0f, 0.0f, zMin);
+    glVertex3f(0.0f, 0.0f, zMax);
+    glEnd();
+    glPopMatrix();
+
+    // Draw X axis
+    glPushMatrix();
+    glBegin(GL_LINES);
+    glColor4f(1.0f, 0.0f, 0.0f, 1.0f); // RED
+    glVertex3f(xMin, 0.0f, 0.0f);
+    glVertex3f(xMax, 0.0f, 0.0f);
+    glEnd();
+    glPopMatrix();
+
+    // Draw Y axis
+    glPushMatrix();
+    glBegin(GL_LINES);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f); // BLUE
+    glVertex3f(0.0f, yMin, 0.0f);
+    glVertex3f(0.0f, yMax, 0.0f);
+    glEnd();
+    glPopMatrix();
+}
 //******************************************************//
 //              CALLBACK FUNCTIONS HERE                 //
 //******************************************************//
@@ -275,7 +382,7 @@ void mouseCallback(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) { // destroy a building
         //TODO
     } else {
-        //TODO  
+        //TODO
     }
 }
 
@@ -315,7 +422,7 @@ void functionCallback(int key, int x, int y) {
         //TODO
     }
     else if (key == GLUT_KEY_F4) { // return to default LookAt setting
-        //TODO    
+        //TODO
     }
     else if (key == GLUT_KEY_F5) { // back left LookAt
         //TODO
@@ -366,14 +473,12 @@ void display(void) {
 	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
 
     // draw grid
-    drawStreet();  
-    
-    // draw cube
-    glPushMatrix();
-    glTranslatef(1.0f, 0.5f, -1.0f);
-    drawCube(0.25);
-    glPopMatrix();
-    //*/
+    drawStreet();
+
+    // Draw Robot Character
+    drawRobot();
+
+    drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, 1.0f, -5.0f); // Draw axis lines to help visualize 3D space
 
     // Display help string
     glPushMatrix();
@@ -406,7 +511,7 @@ int main(int argc, char** argv)
     glutSpecialFunc(functionCallback);
 
 	glEnable(GL_DEPTH_TEST); // enable depth testing
-    //glCullFace(GL_BACK); 
+    //glCullFace(GL_BACK);
     //glEnable(GL_CULL_FACE); // back face culling enabled
 	glutMainLoop();
 }
