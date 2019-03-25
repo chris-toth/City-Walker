@@ -21,9 +21,9 @@ float charY = 0.0f;
 float charZ = 0.0f;
 
 // eye variables
-float eyex = -1.0f;
+float eyex = -0.5f;
 float eyey = 2.0f;
-float eyez = -1.0f;
+float eyez = 2.0f;
 
 // Function for string rendering
 static void PrintString(void *font, char *str) {
@@ -100,6 +100,10 @@ void drawGrass() {
 // Draw street
 void drawStreet() {
     glPushMatrix();
+    glTranslatef(1.0, 0.0, 0.0);
+    glRotatef(90, 0.0, 1.0, 0.0);
+
+    glPushMatrix();
     for (float i = 0.0f; i < 20; i++) {
         glPushMatrix();
         glTranslatef(4*i, 0.0f, 0.0f);
@@ -132,12 +136,15 @@ void drawStreet() {
     glPopMatrix();
 
     // outer roads
+    glPushMatrix();
+    glTranslatef(0.0f, 0.00f, -4);
     for (float i = 0.0f; i < 20; i++) {
         glPushMatrix();
-        glTranslatef(0.0f, 0.0f, 4*i);
+        glTranslatef(0.0f, -0.03f, -4*i);
         drawOuterRoad();
         glPopMatrix();
     }
+    glPopMatrix();
     for (float i = 0.0f; i < 20; i++) {
         glPushMatrix();
         glTranslatef(4*i, 0.0f, 0.0f);
@@ -145,6 +152,30 @@ void drawStreet() {
         drawOuterRoad();
         glPopMatrix();
     }
+
+    // need to double check this when movement is implemented
+    glPushMatrix();
+    glTranslatef(-40.0f, 0.0f, -40.0f);
+    glRotatef(180, 0.0, 1.0, 0.0);
+    glTranslatef(40.0f, 0.0f, 40.0f);
+    glPushMatrix();
+    glTranslatef(0.0f, 0.00f, -4);
+    for (float i = 0.0f; i < 20; i++) {
+        glPushMatrix();
+        glTranslatef(0.0f, -0.03f, -4*i);
+        drawOuterRoad();
+        glPopMatrix();
+    }
+    glPopMatrix();
+    for (float i = 0.0f; i < 20; i++) {
+        glPushMatrix();
+        glTranslatef(4*i, 0.0f, 0.0f);
+        glRotatef(90,0.0,1.0,0.0);
+        drawOuterRoad();
+        glPopMatrix();
+    }
+    glPopMatrix();
+    glPopMatrix();
 }
 
 // Draw buildings
@@ -472,7 +503,7 @@ void display(void) {
     // Set up camera
 	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
 
-    // draw grid
+    // draw street
     drawStreet();
 
     // Draw Robot Character
