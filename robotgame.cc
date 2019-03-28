@@ -15,7 +15,8 @@ int Window_ID;
 int Window_Width = 800;
 int Window_Height = 600;
 
-// character starting position
+// character starting position variables
+enum direction {negZ = 0, posX = 1, posZ = 2, negX = 3} dir = negZ; // direction the robot is facing
 float charX = 0.0f;
 float charY = 0.0f;
 float charZ = 0.0f;
@@ -312,8 +313,8 @@ void drawRobot() {
     drawCube(0.5f);
     glPopMatrix();
 
+    glTranslatef(charX, charY, charZ);
     // draw body details
-    glPushMatrix();
     glBegin(GL_POLYGON);
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     glVertex3f(0.2f, 0.8f, -0.26f);
@@ -322,15 +323,13 @@ void drawRobot() {
     glVertex3f(0.2f, 0.2f, -0.26f);
     glEnd();
 
-    glPushMatrix();
     glBegin(GL_TRIANGLES);
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.85f , 0.26f);
     glVertex3f(0.2f, 0.55f, 0.26f);
     glVertex3f(-0.2f, 0.55f, 0.26f);
     glEnd();
-    glPopMatrix();
-    glPushMatrix();
+
     glBegin(GL_TRIANGLES);
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.55f , 0.26f);
@@ -425,19 +424,40 @@ void keyboardCallback(unsigned char key, int x, int y) {
     }
 
     if (key == 'z') { // push the robot forward
-        //TODO
+        switch (dir) {
+        case negZ:
+            charZ -= 0.2;
+            break;
+        case posZ:
+            charZ += 0.2;
+            break;
+        case negX:
+            charX -= 0.2;
+            break;
+        case posX:
+            charX += 0.2;
+            break;
+        }
     }
     else if (key == 'a') { // turn robot left if at an intersection
-        //TODO
+        if (dir == 0)
+            dir = negX;
+        else
+            dir = direction((int)dir - 1);
     }
     else if (key == 'q') { // turn robot right if at an intersection
-        //TODO
+        if (dir == 3)
+            dir = negZ;
+        else
+            dir = direction((int)dir + 1);
     }
     else if (key == 'p') { // pause the game
         //TODO
     }
     else if (key == 'r') { // return the robot to origin
-        //TODO
+        charX = 0.0;
+        charY = 0.0;
+        charZ = 0.0;
     }
 }
 
@@ -509,7 +529,7 @@ void display(void) {
     // Draw Robot Character
     drawRobot();
 
-    drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, 1.0f, -5.0f); // Draw axis lines to help visualize 3D space
+    drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
 
     // Display help string
     glPushMatrix();
