@@ -438,18 +438,21 @@ void keyboardCallback(unsigned char key, int x, int y) {
             charX += 0.2;
             break;
         }
+        //TODO: set boundaries so robot cant walk off map
     }
     else if (key == 'a') { // turn robot left if at an intersection
         if (dir == 0)
             dir = negX;
         else
             dir = direction((int)dir - 1);
+        //TODO check if robot is at an intersection
     }
     else if (key == 'q') { // turn robot right if at an intersection
         if (dir == 3)
             dir = negZ;
         else
             dir = direction((int)dir + 1);
+        //TODO check if robot is at an intersection
     }
     else if (key == 'p') { // pause the game
         //TODO
