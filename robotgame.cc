@@ -18,12 +18,14 @@ int Window_Width = 800;
 int Window_Height = 600;
 
 // character starting position variables
-enum direction {negZ = 0, posX = 1, posZ = 2, negX = 3} dir = negZ; // direction the robot is facing
+enum direction {NEG_Z = 0, POS_X = 1, POS_Z = 2, NEG_X = 3} dir = NEG_Z; // direction the robot body is facing/moving
+direction headDir = NEG_Z; // direction the robot head is facing
 float charX = 0.0f;
 float charY = 0.0f;
 float charZ = 0.0f;
+float antennaRotate = 30.0;
 
-// eye variables
+// camera eye variables
 float eyex = -0.5f;
 float eyey = 2.0f;
 float eyez = 2.0f;
@@ -184,7 +186,6 @@ void drawStreet() {
 // Draw buildings
 void drawBuildings() {
     glTranslatef(2, 0, -3);
-    CreateBlock();
 }
 
 // Draw Cube
@@ -300,15 +301,30 @@ void drawRobot() {
     * Adding in parts from the bottom up and translating
     * parts to the proper location.
     */
+    glPushMatrix();
+    glTranslatef(charX, charY, charZ);
+    switch (dir) {
+        case NEG_Z:
+            glRotatef(0, 0.0, 1.0, 0.0);
+            break;
+        case POS_X:
+            glRotatef(90, 0.0, 1.0, 0.0);
+            break;
+        case POS_Z:
+            glRotatef(180, 0.0, 1.0, 0.0);
+            break;
+        case NEG_X:
+            glRotatef(270, 0.0, 1.0, 0.0);
+            break;
+    }
     // draw body
     glPushMatrix();
-    glTranslatef(charX, charY + 0.5f, charZ);
+    glTranslatef(0, 0.5f, 0);
     glScalef(0.5f, 1.0f, 0.5f);
     drawCube(0.5f);
     glPopMatrix();
 
-    glTranslatef(charX, charY, charZ);
-    // draw body details
+    // draw chest square
     glBegin(GL_POLYGON);
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     glVertex3f(0.2f, 0.8f, -0.26f);
@@ -317,6 +333,8 @@ void drawRobot() {
     glVertex3f(0.2f, 0.2f, -0.26f);
     glEnd();
 
+    // draw back triangles
+    glPushMatrix();
     glBegin(GL_TRIANGLES);
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.85f , 0.26f);
@@ -325,7 +343,6 @@ void drawRobot() {
     glEnd();
 
     glBegin(GL_TRIANGLES);
-    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.55f , 0.26f);
     glVertex3f(0.2f, 0.25f, 0.26f);
     glVertex3f(-0.2f, 0.25f, 0.26f);
@@ -334,32 +351,52 @@ void drawRobot() {
 
     // draw neck
     glPushMatrix();
-    glTranslatef(charX, charY + 1.0f, charZ);
+    glTranslatef(0.0, 1.0f, 0.0);
     glRotatef(-90, 1.0f, 0.0f, 0.0f);
     drawCylinder(0.15f, 0.15f, 0.09f, 1.0f, 0.5f, 1.0f);
     glPopMatrix();
 
     // draw head
     glPushMatrix();
-    glTranslatef(charX, charY + 1.25f, charZ);
+    switch (headDir) {
+        case NEG_Z:
+            glRotatef(0, 0.0, 1.0, 0.0);
+            break;
+        case POS_X:
+            glRotatef(-90, 0.0, 1.0, 0.0);
+            break;
+        case POS_Z:
+            glRotatef(180, 0.0, 1.0, 0.0);
+            break;
+        case NEG_X:
+            glRotatef(-270, 0.0, 1.0, 0.0);
+            break;
+    }
+    glPushMatrix();
+    glTranslatef(0.0f, 1.25f, 0.0f);
     drawCube(0.16f);
     glPopMatrix();
 
-    // draw eyes and antenna
+    // draw eyes
     glPushMatrix();
-    glTranslatef(charX + -0.07f, charY + 1.26f, charZ + -0.18f);
+    glTranslatef(-0.07f, 1.26f, -0.18f);
     glutSolidSphere(0.04, 20, 20);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(charX + 0.07f, charY + 1.26f, charZ + -0.18f);
+    glTranslatef(0.07f, 1.26f, -0.18f);
     glutSolidSphere(0.04, 20, 20);
     glPopMatrix();
 
+    // draw antenna
     glPushMatrix();
-    glTranslatef(charX, charY + 1.28f, charZ);
+    glTranslatef(0.0, 1.28f, 0.0);
     glRotatef(-90, 1, 0, 0);
+    glRotatef(antennaRotate, 0, 0, 1);
+    glTranslatef(0.05, 0.0, 0.0);
     drawCylinder(0.05f, 0.05f, 0.3f, 0.0f, 1.0f, 1.0f);
+    glPopMatrix();
+    glPopMatrix();
     glPopMatrix();
 }
 
@@ -416,34 +453,34 @@ void keyboardCallback(unsigned char key, int x, int y) {
         glutDestroyWindow(Window_ID);
         exit(1);
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if (key == 'z') { // push the robot forward
         switch (dir) {
-        case negZ:
+        case NEG_Z:
             charZ -= 0.2;
             break;
-        case posZ:
+        case POS_Z:
             charZ += 0.2;
             break;
-        case negX:
-            charX -= 0.2;
-            break;
-        case posX:
+        case NEG_X:
             charX += 0.2;
+            break;
+        case POS_X:
+            charX -= 0.2;
             break;
         }
         //TODO: set boundaries so robot cant walk off map
     }
-    else if (key == 'a') { // turn robot left if at an intersection
+    else if (key == 'a') { // turn robot right if at an intersection
         if (dir == 0)
-            dir = negX;
+            dir = NEG_X;
         else
             dir = direction((int)dir - 1);
         //TODO check if robot is at an intersection
     }
-    else if (key == 'q') { // turn robot right if at an intersection
+    else if (key == 'q') { // turn robot left if at an intersection
         if (dir == 3)
-            dir = negZ;
+            dir = NEG_Z;
         else
             dir = direction((int)dir + 1);
         //TODO check if robot is at an intersection
@@ -461,13 +498,21 @@ void keyboardCallback(unsigned char key, int x, int y) {
 // function bindings
 void functionCallback(int key, int x, int y) {
     if (key == GLUT_KEY_F1) { // turn robot head to face forward (default)
-        //TODO
+        headDir = dir;
     }
-    else if (key == GLUT_KEY_F2) { // turn head right
-        //TODO
+    else if (key == GLUT_KEY_F2) { // HOLD to turn head right
+        {
+            if (headDir == 3)
+                headDir = NEG_Z;
+            else
+                headDir = direction((int)dir + 1);
+        }
     }
-    else if (key == GLUT_KEY_F3) { // turn head right
-        //TODO
+    else if (key == GLUT_KEY_F3) { // HOLD to turn head left
+        if (headDir == 0)
+            headDir = NEG_X;
+        else
+            headDir = direction((int)dir - 1);
     }
     else if (key == GLUT_KEY_F4) { // return to default LookAt setting
         //TODO
@@ -498,6 +543,20 @@ void functionCallback(int key, int x, int y) {
     }
     else { // face forward
         //TODO
+    }
+}
+
+void functionUpCallback(int key, int x, int y) {
+    switch (key) {
+        case GLUT_KEY_F2: // release F2 : return head facing with body
+            headDir = dir;
+            break;
+        case GLUT_KEY_F3: // release F3
+            headDir = dir;
+            break;
+        default:
+            printf("No action for %d", key);
+            break;
     }
 }
 
@@ -550,6 +609,7 @@ void display(void) {
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     glPopMatrix();
 
+    antennaRotate += 30.0;
 	glutSwapBuffers();
 }
 
@@ -565,7 +625,9 @@ int main(int argc, char** argv)
 
     glutMouseFunc(mouseCallback);
     glutKeyboardFunc(keyboardCallback);
+    //glutKeyboardUpFunc(); // checks for when keys are released
     glutSpecialFunc(functionCallback);
+    glutSpecialUpFunc(functionUpCallback); // checks for when Function keys are released
 
 	glEnable(GL_DEPTH_TEST); // enable depth testing
     //glCullFace(GL_BACK);
