@@ -183,8 +183,8 @@ void drawStreet() {
 
 // Draw buildings
 void drawBuildings() {
-    //glTranslatef(4, 0, 0);
-    //CreateBlock();
+    glTranslatef(2, 0, -3);
+    CreateBlock();
 }
 
 // Draw Cube
@@ -523,11 +523,11 @@ void display(void) {
     // draw street
     drawStreet();
 
-    // Draw the buildings
-    drawBuildings();
-
     // Draw Robot Character
     drawRobot();
+    
+    // draw the buildings
+    //drawBuildings();  // TODO figure this out
 
     drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
 

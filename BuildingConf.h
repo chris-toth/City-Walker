@@ -8,15 +8,6 @@
     float R, G, B;
 };
 
- /**
- * Set a state on the buildings to check if they are unbreakable or not
- */
- enum Destructable {
-    WEAK,
-    STRONG,
-    UNBREAKABLE
- };
-
 // create a rectangle
 void CreateRect(float height, float width, float r, float g, float b);
 // create a tall rectangle
@@ -36,29 +27,22 @@ void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
 void CreateBlock() {
     RGBColour rgb = {1.0, 0.0, 0.0};
     RGBColour rgb1 = {0.0, 0.0, 0.0};
-    CreateTallBuilding(rgb);
-    glTranslatef(1, 1, 0);
-    CreateShortBuilding(rgb1);
-    glTranslatef(-1, 1, 2);
-    glRotatef(90, 1, 0, 0);
-    drawCylinder();
-    // for the 20x20 grid layout
-        // repeat until three buildings created
-            // draw a building
-            // if the building to create is a cylinder
-                // rotate by 90 degrees on x-axis first
-            // add colour to the building
-            // set if destructable
-            // set position
-        // move the block to the proper position
+    glTranslatef(0,0,0);
+    glScalef(0, 5, 0);
+    glutSolidCube(0.5);
+    //CreateTallBuilding(rgb);
+    //glTranslatef(-1, 0, 1);
+    //CreateShortBuilding(rgb1);
+    //glTranslatef(-1, 1, 2);
+    //drawCylinder();
 }
 
  void CreateTallBuilding(struct RGBColour rgb) {
-    CreateRect(2, 0.5, rgb.R, rgb.G, rgb.B);
- }
+    CreateRect(2, 0.25, rgb.R, rgb.G, rgb.B);
+}
 
  void CreateShortBuilding(struct RGBColour rgb) {
-    CreateRect(1, 0.5, rgb.R, rgb.G, rgb.B);
+    CreateRect(0.7, 0.25, rgb.R, rgb.G, rgb.B);
  }
 
 /**
@@ -68,7 +52,8 @@ void CreateBlock() {
  * @param rgb, the rgb colour of the building
  */
 void CreateRect(float height, float width, float r, float g, float b) {
-   glBegin(GL_QUADS);
+    glRotatef(-90, 1, 0, 0);
+    glBegin(GL_QUADS);
       glColor3f(r, g, b);
       glVertex3f( width, height, -1.0f);
       glVertex3f(-width, height, -1.0f);
