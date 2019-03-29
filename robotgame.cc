@@ -10,6 +10,8 @@
 #include <GL/glu.h>  // GLU support library.
 #include <GL/glut.h> // GLUT support library.
 
+#include "BuildingConf.h"
+
 int Window_ID;
 
 int Window_Width = 800;
@@ -181,7 +183,8 @@ void drawStreet() {
 
 // Draw buildings
 void drawBuildings() {
-    //TODO
+    //glTranslatef(4, 0, 0);
+    //CreateBlock();
 }
 
 // Draw Cube
@@ -288,15 +291,6 @@ void drawSphere(float size = 0.5f,
     GLUquadric *quad;
     quad = gluNewQuadric();
     gluSphere(quad,size,100,20);
-}
-
-// Draw cylinder
-void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
-             float r = 0.5f, float g = 0.0f, float b = 0.5f) {
-    glColor3f(r, g, b);
-    GLUquadric *quad;
-    quad = gluNewQuadric();
-    gluCylinder(quad, base, top, height, 100, 20);
 }
 
 // Draw robot
@@ -528,6 +522,9 @@ void display(void) {
 
     // draw street
     drawStreet();
+
+    // Draw the buildings
+    drawBuildings();
 
     // Draw Robot Character
     drawRobot();
