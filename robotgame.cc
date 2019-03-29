@@ -185,6 +185,8 @@ void drawStreet() {
 void drawBuildings() {
     glTranslatef(2, 0, -3);
     CreateBlock();
+    glPopMatrix();
+    glPopMatrix();
 }
 
 // Draw Cube
@@ -334,30 +336,30 @@ void drawRobot() {
 
     // draw neck
     glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 0.0f);
+    glTranslatef(charX, charY + 1.0f, charZ);
     glRotatef(-90, 1.0f, 0.0f, 0.0f);
     drawCylinder(0.15f, 0.15f, 0.09f, 1.0f, 0.5f, 1.0f);
     glPopMatrix();
 
     // draw head
     glPushMatrix();
-    glTranslatef(0.0f, 1.25f, 0.0f);
+    glTranslatef(charX, charY + 1.25f, charZ);
     drawCube(0.16f);
     glPopMatrix();
 
     // draw eyes and antenna
     glPushMatrix();
-    glTranslatef(-0.07f, 1.26f, -0.18f);
+    glTranslatef(charX + -0.07f, charY + 1.26f, charZ + -0.18f);
     glutSolidSphere(0.04, 20, 20);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(0.07f, 1.26f, -0.18f);
+    glTranslatef(charX + 0.07f, charY + 1.26f, charZ + -0.18f);
     glutSolidSphere(0.04, 20, 20);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(0.0f, 1.28f, 0.0f);
+    glTranslatef(charX, charY + 1.28f, charZ);
     glRotatef(-90, 1, 0, 0);
     drawCylinder(0.05f, 0.05f, 0.3f, 0.0f, 1.0f, 1.0f);
     glPopMatrix();
@@ -520,16 +522,22 @@ void display(void) {
     // Set up camera
 	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
 
+	drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
+
     // draw street
     drawStreet();
 
-    // Draw Robot Character
-    drawRobot();
-    
-    // draw the buildings
-    //drawBuildings();  // TODO figure this out
 
-    drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
+    // Draw Robot Character
+    glPushMatrix();
+    drawRobot();
+    glPopMatrix();
+
+    glPushMatrix();
+    // draw the buildings
+    drawBuildings();  // TODO figure this out
+    glPopMatrix();
+
 
     // Display help string
     glPushMatrix();

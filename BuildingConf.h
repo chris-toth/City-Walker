@@ -1,6 +1,6 @@
 /**
  * Create buildings to render onto the grid
- * @author Jayden Stoll
+ * @author Jayden Stoll, Chris Toth
  * @date March 24, 2019
  */
 
@@ -27,14 +27,14 @@ void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
 void CreateBlock() {
     RGBColour rgb = {1.0, 0.0, 0.0};
     RGBColour rgb1 = {0.0, 0.0, 0.0};
-    glTranslatef(0,0,0);
-    glScalef(0, 5, 0);
-    glutSolidCube(0.5);
-    //CreateTallBuilding(rgb);
-    //glTranslatef(-1, 0, 1);
-    //CreateShortBuilding(rgb1);
-    //glTranslatef(-1, 1, 2);
-    //drawCylinder();
+//    glScalef(0, 5, 0);
+//    glutSolidCube(0.5);
+    CreateTallBuilding(rgb);
+//    glTranslatef(-1, 0, 1);
+//    CreateShortBuilding(rgb1);
+//    glTranslatef(-1, 1, 2);
+//    drawCylinder();
+    glPopMatrix();
 }
 
  void CreateTallBuilding(struct RGBColour rgb) {
@@ -52,36 +52,39 @@ void CreateBlock() {
  * @param rgb, the rgb colour of the building
  */
 void CreateRect(float height, float width, float r, float g, float b) {
-    glRotatef(-90, 1, 0, 0);
-    glBegin(GL_QUADS);
+//    glBegin(GL_QUADS);
+    glPushMatrix();
       glColor3f(r, g, b);
-      glVertex3f( width, height, -1.0f);
-      glVertex3f(-width, height, -1.0f);
-      glVertex3f(-width, height,  1.0f);
-      glVertex3f( width, height,  1.0f);
-
-      glVertex3f( width, -height,  1.0f);
-      glVertex3f(-width, -height,  1.0f);
-      glVertex3f(-width, -height, -1.0f);
-      glVertex3f( width, -height, -1.0f);
-
-      glVertex3f( width,  height, 1.0f);
-      glVertex3f(-width,  height, 1.0f);
-      glVertex3f(-width, -height, 1.0f);
-      glVertex3f( width, -height, 1.0f);
-      glVertex3f( width, -height, -1.0f);
-      glVertex3f(-width, -height, -1.0f);
-      glVertex3f(-width,  height, -1.0f);
-      glVertex3f( width,  height, -1.0f);
-
-      glVertex3f(-width,  height,  1.0f);
-      glVertex3f(-width,  height, -1.0f);
-      glVertex3f(-width, -height, -1.0f);
-      glVertex3f(-width, -height,  1.0f);
-
-      glVertex3f(width,  height, -1.0f);
-      glVertex3f(width,  height,  1.0f);
-      glVertex3f(width, -height,  1.0f);
-      glVertex3f(width, -height, -1.0f);
-   glEnd();
+      glScalef(width, height, width);
+      glutSolidCube(1);
+//      glVertex3f( width, height, -1.0f);
+//      glVertex3f(-width, height, -1.0f);
+//      glVertex3f(-width, height,  1.0f);
+//      glVertex3f( width, height,  1.0f);
+//
+//      glVertex3f( width, -height,  1.0f);
+//      glVertex3f(-width, -height,  1.0f);
+//      glVertex3f(-width, -height, -1.0f);
+//      glVertex3f( width, -height, -1.0f);
+//
+//      glVertex3f( width,  height, 1.0f);
+//      glVertex3f(-width,  height, 1.0f);
+//      glVertex3f(-width, -height, 1.0f);
+//      glVertex3f( width, -height, 1.0f);
+//      glVertex3f( width, -height, -1.0f);
+//      glVertex3f(-width, -height, -1.0f);
+//      glVertex3f(-width,  height, -1.0f);
+//      glVertex3f( width,  height, -1.0f);
+//
+//      glVertex3f(-width,  height,  1.0f);
+//      glVertex3f(-width,  height, -1.0f);
+//      glVertex3f(-width, -height, -1.0f);
+//      glVertex3f(-width, -height,  1.0f);
+//
+//      glVertex3f(width,  height, -1.0f);
+//      glVertex3f(width,  height,  1.0f);
+//      glVertex3f(width, -height,  1.0f);
+//      glVertex3f(width, -height, -1.0f);
+//   glEnd();
+   glPopMatrix();
 }
