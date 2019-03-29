@@ -52,39 +52,9 @@ void CreateBlock() {
  * @param rgb, the rgb colour of the building
  */
 void CreateRect(float height, float width, float r, float g, float b) {
-//    glBegin(GL_QUADS);
     glPushMatrix();
-      glColor3f(r, g, b);
-      glScalef(width, height, width);
-      glutSolidCube(1);
-//      glVertex3f( width, height, -1.0f);
-//      glVertex3f(-width, height, -1.0f);
-//      glVertex3f(-width, height,  1.0f);
-//      glVertex3f( width, height,  1.0f);
-//
-//      glVertex3f( width, -height,  1.0f);
-//      glVertex3f(-width, -height,  1.0f);
-//      glVertex3f(-width, -height, -1.0f);
-//      glVertex3f( width, -height, -1.0f);
-//
-//      glVertex3f( width,  height, 1.0f);
-//      glVertex3f(-width,  height, 1.0f);
-//      glVertex3f(-width, -height, 1.0f);
-//      glVertex3f( width, -height, 1.0f);
-//      glVertex3f( width, -height, -1.0f);
-//      glVertex3f(-width, -height, -1.0f);
-//      glVertex3f(-width,  height, -1.0f);
-//      glVertex3f( width,  height, -1.0f);
-//
-//      glVertex3f(-width,  height,  1.0f);
-//      glVertex3f(-width,  height, -1.0f);
-//      glVertex3f(-width, -height, -1.0f);
-//      glVertex3f(-width, -height,  1.0f);
-//
-//      glVertex3f(width,  height, -1.0f);
-//      glVertex3f(width,  height,  1.0f);
-//      glVertex3f(width, -height,  1.0f);
-//      glVertex3f(width, -height, -1.0f);
-//   glEnd();
-   glPopMatrix();
+    glColor3f(r, g, b);
+    glScalef(width, height, width);
+    glutSolidCube(1);
+    glPopMatrix();
 }

@@ -185,8 +185,6 @@ void drawStreet() {
 void drawBuildings() {
     glTranslatef(2, 0, -3);
     CreateBlock();
-    glPopMatrix();
-    glPopMatrix();
 }
 
 // Draw Cube
