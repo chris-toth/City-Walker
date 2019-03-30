@@ -30,6 +30,11 @@ float eyex = -0.5f;
 float eyey = 2.0f;
 float eyez = 2.0f;
 
+//camera at variables
+float atx = 0;
+float aty = 1;
+float atz = 0;
+
 // Function for string rendering
 static void PrintString(void *font, char *str) {
    int i,len=strlen(str);
@@ -456,8 +461,8 @@ void keyboardCallback(unsigned char key, int x, int y) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if (key == 'z') { // push the robot forward
         switch (dir) {
-        case NEG_Z:
-            charZ -= 0.2;
+	case NEG_Z:
+	    charZ -= 0.2;
             break;
         case POS_Z:
             charZ += 0.2;
@@ -497,7 +502,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
 
 // function bindings
 void functionCallback(int key, int x, int y) {
-    if (key == GLUT_KEY_F1) { // turn robot head to face forward (default)
+   if (key == GLUT_KEY_F1){ // turn robot head to face forward (default)
         headDir = dir;
     }
     else if (key == GLUT_KEY_F2) { // HOLD to turn head right
@@ -515,31 +520,85 @@ void functionCallback(int key, int x, int y) {
             headDir = direction((int)dir - 1);
     }
     else if (key == GLUT_KEY_F4) { // return to default LookAt setting
-        //TODO
+       //TODO
+       eyex = - 0.5;
+       eyey = 2.0;
+       eyez = 2.0;
+       atx = 0;
+       aty = 0;
+       atz = 0;
     }
     else if (key == GLUT_KEY_F5) { // back left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 1;
+       eyey = charY + 2;
+       eyez = charZ - 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F6) { // back right LookAt
-        //TODO
+       //TODO
+        eyex = charX - 1;
+       eyey = charY + 2;
+       eyez = charZ - 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F7) { // front left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 1;
+       eyey = charY + 2;
+       eyez = charZ + 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F8) { // front right LookAt
-        //TODO
+       //TODO
+        eyex = charX - 1;
+       eyey = charY + 2;
+       eyez = charZ + 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F9) { // further back left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 2;
+       eyey = charY + 2;
+       eyez = charZ - 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F10) { // further back right LookAt
-        //TODO
+       //TODO
+        eyex = charX - 2;
+       eyey = charY + 2;
+       eyez = charZ - 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F11) { // further front left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 2;
+       eyey = charY + 2;
+       eyez = charZ + 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F12) { // further front right LookAt
-        //TODO
+       //TODO
+       eyex = charX - 2;
+       eyey = charY + 2;
+       eyez = charZ + 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else { // face forward
         //TODO
@@ -577,7 +636,7 @@ void display(void) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
     // Set up camera
-	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
+	gluLookAt(eyex,eyey,eyez,atx,aty,atz,0.0,1.0,0.0);
 
 	drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
 
