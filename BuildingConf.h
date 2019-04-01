@@ -28,9 +28,7 @@ void CreateBlock() {
     RGBColour rgb = {1.0, 0.0, 0.0};
     RGBColour rgb1 = {0.0, 0.0, 0.0};
     glTranslatef(0,0,0);
-    glScalef(0, 5, 0);
-    glutSolidCube(0.5);
-    //CreateTallBuilding(rgb);
+    CreateTallBuilding(rgb);
     //glTranslatef(-1, 0, 1);
     //CreateShortBuilding(rgb1);
     //glTranslatef(-1, 1, 2);
@@ -83,5 +81,6 @@ void CreateRect(float height, float width, float r, float g, float b) {
       glVertex3f(width,  height,  1.0f);
       glVertex3f(width, -height,  1.0f);
       glVertex3f(width, -height, -1.0f);
-   glEnd();
+    glEnd();
+    glPopMatrix();
 }
