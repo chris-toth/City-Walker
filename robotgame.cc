@@ -1,6 +1,6 @@
 #define GL_GLEXT_PROTOTYPES
 #define DISPLAY_MOUSE_INFO "Mouse control information here?"
-#define DISPLAY_KEY_INFO "Keyboard control information here?"
+#define DISPLAY_KEY_INFO "F1-F3: Turn head | F4: Default LookAt | F5-F12: Change camera position"
 
 #include <stdlib.h>  // Useful for the following includes.
 #include <stdio.h>
@@ -114,7 +114,7 @@ void drawStreet() {
     glRotatef(90, 0.0, 1.0, 0.0);
 
     glPushMatrix();
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef(4*i, 0.0f, 0.0f);
         for (float j = 0.0f; j < 20; j++) {
@@ -129,7 +129,7 @@ void drawStreet() {
     glPopMatrix();
 
     glPushMatrix();
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef(0.0f, 0.0f, 4*i);
         glRotatef(90,0.0,1.0,0.0);
@@ -148,35 +148,24 @@ void drawStreet() {
     // outer roads
     glPushMatrix();
     glTranslatef(0.0f, 0.00f, -4);
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef(0.0f, -0.03f, -4*i);
         drawOuterRoad();
         glPopMatrix();
     }
     glPopMatrix();
-    for (float i = 0.0f; i < 20; i++) {
-        glPushMatrix();
-        glTranslatef(4*i, 0.0f, 0.0f);
-        glRotatef(90,0.0,1.0,0.0);
-        drawOuterRoad();
-        glPopMatrix();
-    }
 
-    // need to double check this when movement is implemented
-    glPushMatrix();
-    glTranslatef(-40.0f, 0.0f, -40.0f);
-    glRotatef(180, 0.0, 1.0, 0.0);
-    glTranslatef(40.0f, 0.0f, 40.0f);
     glPushMatrix();
     glTranslatef(0.0f, 0.00f, -4);
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
-        glTranslatef(0.0f, -0.03f, -4*i);
+        glTranslatef(80.0f, 0.01f, -4*i);
         drawOuterRoad();
         glPopMatrix();
     }
     glPopMatrix();
+
     for (float i = 0.0f; i < 20; i++) {
         glPushMatrix();
         glTranslatef(4*i, 0.0f, 0.0f);
@@ -184,8 +173,14 @@ void drawStreet() {
         drawOuterRoad();
         glPopMatrix();
     }
-    glPopMatrix();
-    glPopMatrix();
+    
+    for (float i = 0.0f; i <= 20; i++) {
+        glPushMatrix();
+        glTranslatef((i*4.0f)-1, 0.0f, -80.0f);
+        glRotatef(90,0.0,1.0,0.0);
+        drawOuterRoad();
+        glPopMatrix();
+    }
 }
 
 // Draw buildings
@@ -461,17 +456,17 @@ void keyboardCallback(unsigned char key, int x, int y) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if (key == 'z') { // push the robot forward
         switch (dir) {
-	case NEG_Z:
-	    charZ -= 0.2;
+	    case NEG_Z:
+            if (charZ >= -80) charZ -= 0.2;
             break;
         case POS_Z:
-            charZ += 0.2;
+            if (charZ <= 0) charZ += 0.2;
             break;
         case NEG_X:
-            charX += 0.2;
+            if (charX <= 80) charX += 0.2;
             break;
         case POS_X:
-            charX -= 0.2;
+            if (charX >= 0) charX -= 0.2;
             break;
         }
         //TODO: set boundaries so robot cant walk off map
@@ -660,7 +655,7 @@ void display(void) {
     glLoadIdentity();
     glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
     glColor4f(0.6,1.0,0.6,1.00);
-    sprintf(buf,"%s", DISPLAY_MOUSE_INFO); // Print the string into a buffer
+    sprintf(buf,"Character location: (%.2f,%.2f,%.2f)", charX, charY, charZ); // Print the string into a buffer
     glWindowPos2i(3,20);                         // Set the coordinate
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
