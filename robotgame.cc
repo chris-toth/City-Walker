@@ -457,16 +457,40 @@ void keyboardCallback(unsigned char key, int x, int y) {
     if (key == 'z') { // push the robot forward
         switch (dir) {
 	    case NEG_Z:
-            if (charZ >= -80) charZ -= 0.2;
+            if (charZ >= -81) {
+                charZ -= 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atz = charZ;
+            }
             break;
         case POS_Z:
-            if (charZ <= 0) charZ += 0.2;
+            if (charZ <= 0) {
+                charZ += 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atz = charZ;
+            }
             break;
         case NEG_X:
-            if (charX <= 80) charX += 0.2;
+            if (charX <= 81) {
+                charX += 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atx = charX;
+            }
             break;
         case POS_X:
-            if (charX >= 0) charX -= 0.2;
+            if (charX >= -.5) {
+                charX -= 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atx = charX;
+            }
             break;
         }
         //TODO: set boundaries so robot cant walk off map
