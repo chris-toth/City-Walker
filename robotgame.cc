@@ -12,6 +12,10 @@
 
 #include "BuildingConf.h"
 
+#include <vector>
+
+using namespace std;
+
 int Window_ID;
 
 int Window_Width = 800;
@@ -173,7 +177,7 @@ void drawStreet() {
         drawOuterRoad();
         glPopMatrix();
     }
-    
+
     for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef((i*4.0f)-1, 0.0f, -80.0f);
@@ -447,6 +451,32 @@ void mouseCallback(int button, int state, int x, int y) {
     }
 }
 
+bool legalTurnX(int x) {
+  vector<int> allowedX;
+  for (int i = 0; i <= 80; i=i+4) {
+    allowedX.push_back(i);
+  }
+
+  for (int i = 0; i < allowedX.size(); i++) {
+    if (x == allowedX[i])
+      return true;
+  }
+  return false;
+}
+
+bool legalTurnZ(int z) {
+  vector<int> allowedZ;
+  for (int i = -1; i >= -80; i=i-4) {
+    allowedZ.push_back(i);
+  }
+
+  for (int i = 0; i < allowedZ.size(); i++) {
+    if (z == allowedZ[i])
+      return true;
+  }
+  return false;
+}
+
 // keyboard bindings
 void keyboardCallback(unsigned char key, int x, int y) {
     if (key == 'x'){
@@ -496,18 +526,22 @@ void keyboardCallback(unsigned char key, int x, int y) {
         //TODO: set boundaries so robot cant walk off map
     }
     else if (key == 'a') { // turn robot right if at an intersection
+      if (legalTurnX((int)charX) && legalTurnZ((int)charZ)){
         if (dir == 0)
             dir = NEG_X;
         else
             dir = direction((int)dir - 1);
+      }
         //TODO check if robot is at an intersection
     }
     else if (key == 'q') { // turn robot left if at an intersection
+      if (legalTurnX((int)charX) && legalTurnZ((int)charZ)){
         if (dir == 3)
             dir = NEG_Z;
         else
             dir = direction((int)dir + 1);
         //TODO check if robot is at an intersection
+      }
     }
     else if (key == 'p') { // pause the game
         //TODO
