@@ -12,6 +12,10 @@
 
 #include "BuildingConf.h"
 
+#include <vector>
+
+using namespace std;
+
 int Window_ID;
 
 int Window_Width = 800;
@@ -38,7 +42,7 @@ float atz = 0;
 float xCoord = 2;
 float zCoord = -3;
 
-void drawBuildings();
+bool paused = 0;
 
 // Function for string rendering
 static void PrintString(void *font, char *str) {
@@ -194,13 +198,13 @@ void drawBuildings() {
 	    glTranslatef(2, 0, -3);
     for (int i = 0; i < 80; i+=4) {
 	    glPushMatrix();
-        for (int j = 0; j < 80; j+=4) { 
+        for (int j = 0; j < 80; j+=4) {
              glPushMatrix();
 	     glTranslatef(j, 0, -i);
 	     CreateBlock();
 	     //glutSolidCube(1);
              glPopMatrix();
-	} 
+	}
 	     glPopMatrix();
     }
 	glPopMatrix();
@@ -465,12 +469,35 @@ void mouseCallback(int button, int state, int x, int y) {
     }
 }
 
+bool legalTurnX(int x) {
+  vector<int> allowedX;
+  for (int i = 0; i <= 80; i=i+4) {
+    allowedX.push_back(i);
+  }
+
+  for (int i = 0; i < allowedX.size(); i++) {
+    if (x == allowedX[i])
+      return true;
+  }
+  return false;
+}
+
+bool legalTurnZ(int z) {
+  vector<int> allowedZ;
+  for (int i = -1; i >= -80; i=i-4) {
+    allowedZ.push_back(i);
+  }
+
+  for (int i = 0; i < allowedZ.size(); i++) {
+    if (z == allowedZ[i])
+      return true;
+  }
+  return false;
+}
+
 // keyboard bindings
 void keyboardCallback(unsigned char key, int x, int y) {
-    if (key == 'x'){
-        glutDestroyWindow(Window_ID);
-        exit(1);
-    }
+  if (paused == 0) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if (key == 'z') { // push the robot forward
         switch (dir) {
@@ -514,31 +541,44 @@ void keyboardCallback(unsigned char key, int x, int y) {
         //TODO: set boundaries so robot cant walk off map
     }
     else if (key == 'a') { // turn robot right if at an intersection
+      if (legalTurnX((int)charX) && legalTurnZ((int)charZ)){
         if (dir == 0)
             dir = NEG_X;
         else
             dir = direction((int)dir - 1);
+      }
         //TODO check if robot is at an intersection
     }
     else if (key == 'q') { // turn robot left if at an intersection
+      if (legalTurnX((int)charX) && legalTurnZ((int)charZ)){
         if (dir == 3)
             dir = NEG_Z;
         else
             dir = direction((int)dir + 1);
         //TODO check if robot is at an intersection
-    }
-    else if (key == 'p') { // pause the game
-        //TODO
+      }
     }
     else if (key == 'r') { // return the robot to origin
         charX = 0.0;
         charY = 0.0;
         charZ = 0.0;
     }
+  }
+    if (key == 'p') { // pause the game
+        if (paused == 1)
+          paused = 0;
+        else
+          paused = 1;
+    }
+    if (key == 'x'){
+        glutDestroyWindow(Window_ID);
+        exit(1);
+    }
 }
 
 // function bindings
 void functionCallback(int key, int x, int y) {
+  if (paused == 0) {
    if (key == GLUT_KEY_F1){ // turn robot head to face forward (default)
         headDir = dir;
     }
@@ -640,6 +680,7 @@ void functionCallback(int key, int x, int y) {
     else { // face forward
         //TODO
     }
+  }
 }
 
 void functionUpCallback(int key, int x, int y) {
@@ -697,7 +738,7 @@ void display(void) {
     glLoadIdentity();
     glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
     glColor4f(0.6,1.0,0.6,1.00);
-    sprintf(buf,"Character location: (%.2f,%.2f,%.2f)", charX, charY, charZ); // Print the string into a buffer
+    sprintf(buf,"Character location: (%.2f,%.2f,%.2f), paused: %i", charX, charY, charZ, paused); // Print the string into a buffer
     glWindowPos2i(3,20);                         // Set the coordinate
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
@@ -721,10 +762,11 @@ int main(int argc, char** argv)
 
     glutMouseFunc(mouseCallback);
     glutKeyboardFunc(keyboardCallback);
+    if (paused == 0) {
     //glutKeyboardUpFunc(); // checks for when keys are released
     glutSpecialFunc(functionCallback);
     glutSpecialUpFunc(functionUpCallback); // checks for when Function keys are released
-
+  }
 	glEnable(GL_DEPTH_TEST); // enable depth testing
     //glCullFace(GL_BACK);
     //glEnable(GL_CULL_FACE); // back face culling enabled
