@@ -469,30 +469,29 @@ void mouseCallback(int button, int state, int x, int y) {
     }
 }
 
-bool legalTurnX(int x) {
-  vector<int> allowedX;
-  for (int i = 0; i <= 80; i=i+4) {
+// helper function to check if robot is standing in an intersection
+bool atIntersection(float x, float z) {
+  bool xAt = 0;
+  bool zAt = 0;
+
+  vector<float> allowedX;
+  for (float i = 0; i <= 84; i=i+4.00f) {
     allowedX.push_back(i);
   }
-
-  for (int i = 0; i < allowedX.size(); i++) {
-    if (x == allowedX[i])
-      return true;
-  }
-  return false;
-}
-
-bool legalTurnZ(int z) {
-  vector<int> allowedZ;
-  for (int i = -1; i >= -80; i=i-4) {
+  vector<float> allowedZ;
+  for (float i = -1; i >= -84; i=i-4.00) {
     allowedZ.push_back(i);
   }
 
-  for (int i = 0; i < allowedZ.size(); i++) {
-    if (z == allowedZ[i])
-      return true;
+  for (int i = 0; i < allowedX.size(); i++) {
+    if (x > (allowedX[i] - 0.40) && x < (allowedX[i] + 0.40))
+      xAt = true;
   }
-  return false;
+  for (float i = 0; i < allowedZ.size(); i++) {
+    if (z > (allowedZ[i] - 0.40) && z < (allowedZ[i] + 0.40))
+      zAt = true;
+  }
+  return xAt && zAt;
 }
 
 // keyboard bindings
@@ -541,7 +540,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
         //TODO: set boundaries so robot cant walk off map
     }
     else if (key == 'a') { // turn robot right if at an intersection
-      if (legalTurnX((int)charX) && legalTurnZ((int)charZ)){
+      if (atIntersection(charX,charZ)){
         if (dir == 0)
             dir = NEG_X;
         else
@@ -550,7 +549,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
         //TODO check if robot is at an intersection
     }
     else if (key == 'q') { // turn robot left if at an intersection
-      if (legalTurnX((int)charX) && legalTurnZ((int)charZ)){
+      if (atIntersection(charX,charZ)){
         if (dir == 3)
             dir = NEG_Z;
         else
@@ -562,6 +561,12 @@ void keyboardCallback(unsigned char key, int x, int y) {
         charX = 0.0;
         charY = 0.0;
         charZ = 0.0;
+        eyex = - 0.5;
+        eyey = 2.0;
+        eyez = 2.0;
+        atx = 0;
+        aty = 0;
+        atz = 0;
     }
   }
     if (key == 'p') { // pause the game
@@ -738,7 +743,7 @@ void display(void) {
     glLoadIdentity();
     glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
     glColor4f(0.6,1.0,0.6,1.00);
-    sprintf(buf,"Character location: (%.2f,%.2f,%.2f), paused: %i", charX, charY, charZ, paused); // Print the string into a buffer
+    sprintf(buf,"Character location: (%.2f,%.2f,%.2f), At intersection: %i, Paused: %i", charX, charY, charZ, atIntersection(charX,charZ), paused); // Print the string into a buffer
     glWindowPos2i(3,20);                         // Set the coordinate
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
