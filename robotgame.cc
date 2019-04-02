@@ -483,11 +483,11 @@ bool atIntersection(float x, float z) {
     allowedZ.push_back(i);
   }
 
-  for (int i = 0; i < allowedX.size(); i++) {
+  for (unsigned int i = 0; i < allowedX.size(); i++) {
     if (x > (allowedX[i] - 0.40) && x < (allowedX[i] + 0.40))
       xAt = true;
   }
-  for (float i = 0; i < allowedZ.size(); i++) {
+  for (unsigned int i = 0; i < allowedZ.size(); i++) {
     if (z > (allowedZ[i] - 0.40) && z < (allowedZ[i] + 0.40))
       zAt = true;
   }
@@ -537,7 +537,6 @@ void keyboardCallback(unsigned char key, int x, int y) {
             }
             break;
         }
-        //TODO: set boundaries so robot cant walk off map
     }
     else if (key == 'a') { // turn robot right if at an intersection
       if (atIntersection(charX,charZ)){
@@ -546,7 +545,6 @@ void keyboardCallback(unsigned char key, int x, int y) {
         else
             dir = direction((int)dir - 1);
       }
-        //TODO check if robot is at an intersection
     }
     else if (key == 'q') { // turn robot left if at an intersection
       if (atIntersection(charX,charZ)){
@@ -554,7 +552,6 @@ void keyboardCallback(unsigned char key, int x, int y) {
             dir = NEG_Z;
         else
             dir = direction((int)dir + 1);
-        //TODO check if robot is at an intersection
       }
     }
     else if (key == 'r') { // return the robot to origin
@@ -602,7 +599,6 @@ void functionCallback(int key, int x, int y) {
             headDir = direction((int)dir - 1);
     }
     else if (key == GLUT_KEY_F4) { // return to default LookAt setting
-       //TODO
        eyex = - 0.5;
        eyey = 2.0;
        eyez = 2.0;
@@ -611,7 +607,6 @@ void functionCallback(int key, int x, int y) {
        atz = 0;
     }
     else if (key == GLUT_KEY_F5) { // back left LookAt
-       //TODO
        eyex = charX + 1;
        eyey = charY + 2;
        eyez = charZ - 1;
@@ -620,7 +615,6 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F6) { // back right LookAt
-       //TODO
         eyex = charX - 1;
        eyey = charY + 2;
        eyez = charZ - 1;
@@ -629,7 +623,6 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F7) { // front left LookAt
-       //TODO
        eyex = charX + 1;
        eyey = charY + 2;
        eyez = charZ + 1;
@@ -638,7 +631,6 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F8) { // front right LookAt
-       //TODO
         eyex = charX - 1;
        eyey = charY + 2;
        eyez = charZ + 1;
@@ -647,7 +639,6 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F9) { // further back left LookAt
-       //TODO
        eyex = charX + 2;
        eyey = charY + 2;
        eyez = charZ - 2;
@@ -656,7 +647,6 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F10) { // further back right LookAt
-       //TODO
         eyex = charX - 2;
        eyey = charY + 2;
        eyez = charZ - 2;
@@ -665,7 +655,6 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F11) { // further front left LookAt
-       //TODO
        eyex = charX + 2;
        eyey = charY + 2;
        eyez = charZ + 2;
@@ -674,16 +663,12 @@ void functionCallback(int key, int x, int y) {
        atz = charZ;
     }
     else if (key == GLUT_KEY_F12) { // further front right LookAt
-       //TODO
        eyex = charX - 2;
        eyey = charY + 2;
        eyez = charZ + 2;
        atx = charX;
        aty = charY;
        atz = charZ;
-    }
-    else { // face forward
-        //TODO
     }
   }
 }
