@@ -5,11 +5,11 @@
  */
 
  struct RGBColour {
-    float R, G, B;
+    GLfloat R, G, B;
 };
 
 // create a rectangle
-void CreateRect(float height, float width, float r, float g, float b);
+void CreateRect(float height, float width, struct RGBColour rgb);
 // create a tall rectangle
 void CreateTallBuilding(struct RGBColour rgb);
 void CreateShortBuilding(struct RGBColour rgb);
@@ -23,24 +23,35 @@ void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
     gluCylinder(quad, base, top, height, 100, 20);
 }
 
+// this didnt work but im keeping it in anyway
+RGBColour RandomColour() {
+    return {static_cast <float> (rand()) / static_cast <float> (RAND_MAX), 
+            static_cast <float> (rand()) / static_cast <float> (RAND_MAX), 
+            static_cast <float> (rand()) / static_cast <float> (RAND_MAX)};
+}
 
-void CreateBlock() 
-{
+void CreateBlock() {
     glPushMatrix();
     RGBColour rgb = {1.0, 0.0, 0.0};
-    RGBColour rgb1 = {0.0, 0.0, 0.0};
+    RGBColour rgb1 = {1.0, 1.0, 1.0};
+    glTranslatef(0, 1.25, 0);
     CreateTallBuilding(rgb);
-    glTranslatef(0.7, 0, 0.7);
+    glTranslatef(0.7, -1.25, 0.7);
     CreateShortBuilding(rgb1);
+    glPushMatrix();
+    glTranslatef(-1, 0, -1.70);
+    glRotatef(-90, 1, 0, 0);
+    drawCylinder();
+    glPopMatrix();
     glPopMatrix();
 }
 
  void CreateTallBuilding(struct RGBColour rgb) {
-    CreateRect(5, 1, rgb.R, rgb.G, rgb.B);
+    CreateRect(5, 1, rgb);
 }
 
  void CreateShortBuilding(struct RGBColour rgb) {
-    CreateRect(2, 0.25, rgb.R, rgb.G, rgb.B);
+    CreateRect(2, 0.50, rgb);
  }
 
 /**
@@ -49,9 +60,9 @@ void CreateBlock()
  * @param width, the width of the rectangle
  * @param rgb, the rgb colour of the building
  */
-void CreateRect(float height, float width, float r, float g, float b) {
+void CreateRect(float height, float width, struct RGBColour rgb) {
     glPushMatrix();
-    glColor3f(r, g, b);
+    glColor3f(rgb.R, rgb.G, rgb.B);
     glScalef(width, height, width);
     glutSolidCube(1);
     glPopMatrix();

@@ -565,6 +565,7 @@ void keyboardCallback(unsigned char key, int x, int y) {
         atx = 0;
         aty = 0;
         atz = 0;
+        dir = NEG_Z;
     }
     else if (key == 'o') { // toggle orthographic view
         if (ortho == 1)
@@ -704,7 +705,7 @@ void display(void) {
     // Set up ortho view
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	
+
     if (ortho)
         glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
     else
