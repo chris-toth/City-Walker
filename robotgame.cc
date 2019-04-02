@@ -1,5 +1,5 @@
 #define GL_GLEXT_PROTOTYPES
-#define DISPLAY_MOUSE_INFO "Mouse control information here?"
+#define DISPLAY_KEY_INFO2 "Z: Move Forward | A: Turn Right | Q: Turn Left | P: Pause | O: Toggle Ortho | X: Exit"
 #define DISPLAY_KEY_INFO "F1-F3: Turn head | F4: Default LookAt | F5-F12: Change camera position"
 
 #include <stdlib.h>  // Useful for the following includes.
@@ -43,6 +43,7 @@ float xCoord = 2;
 float zCoord = -3;
 
 bool paused = 0;
+bool ortho = 0;
 
 // Function for string rendering
 static void PrintString(void *font, char *str) {
@@ -565,6 +566,12 @@ void keyboardCallback(unsigned char key, int x, int y) {
         aty = 0;
         atz = 0;
     }
+    else if (key == 'o') { // toggle orthographic view
+        if (ortho == 1)
+          ortho = 0;
+        else
+          ortho = 1;
+    }
   }
     if (key == 'p') { // pause the game
         if (paused == 1)
@@ -599,12 +606,12 @@ void functionCallback(int key, int x, int y) {
             headDir = direction((int)dir - 1);
     }
     else if (key == GLUT_KEY_F4) { // return to default LookAt setting
-       eyex = - 0.5;
-       eyey = 2.0;
-       eyez = 2.0;
-       atx = 0;
-       aty = 0;
-       atz = 0;
+       eyex = charX - 0.5;
+       eyey = charY + 2.0;
+       eyez = charZ + 2.0;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F5) { // back left LookAt
        eyex = charX + 1;
@@ -697,8 +704,11 @@ void display(void) {
     // Set up ortho view
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	//glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
-    gluPerspective(90.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
+	
+    if (ortho)
+        glOrtho(-5.0, 5.0, -5.0, 5.0, -50.0, 50.0);
+    else
+        gluPerspective(90.0f,(GLfloat)Window_Width/(GLfloat)Window_Height,0.1f,100.0f);
 
     // Switch to modelview for drawing
 	glMatrixMode(GL_MODELVIEW);
@@ -711,7 +721,6 @@ void display(void) {
     // draw street
     drawStreet();
 
-
     // Draw Robot Character
     glPushMatrix();
     drawRobot();
@@ -722,17 +731,19 @@ void display(void) {
     drawBuildings();
     glPopMatrix();
 
-
     // Display help string
     glPushMatrix();
     glLoadIdentity();
     glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
     glColor4f(0.6,1.0,0.6,1.00);
+    sprintf(buf,"%s", DISPLAY_KEY_INFO2); // Print the string into a buffer
+    glWindowPos2i(3,5);                         // Set the coordinate
+    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     sprintf(buf,"Character location: (%.2f,%.2f,%.2f), At intersection: %i, Paused: %i", charX, charY, charZ, atIntersection(charX,charZ), paused); // Print the string into a buffer
-    glWindowPos2i(3,20);                         // Set the coordinate
+    glWindowPos2i(3,580);                         // Set the coordinate
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
-    glWindowPos2i(3,3);                         // Set the coordinate
+    glWindowPos2i(3,20);                         // Set the coordinate
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     glPopMatrix();
 
@@ -752,11 +763,11 @@ int main(int argc, char** argv)
 
     glutMouseFunc(mouseCallback);
     glutKeyboardFunc(keyboardCallback);
-    if (paused == 0) {
+
     //glutKeyboardUpFunc(); // checks for when keys are released
     glutSpecialFunc(functionCallback);
     glutSpecialUpFunc(functionUpCallback); // checks for when Function keys are released
-  }
+
 	glEnable(GL_DEPTH_TEST); // enable depth testing
     //glCullFace(GL_BACK);
     //glEnable(GL_CULL_FACE); // back face culling enabled
