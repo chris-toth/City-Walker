@@ -1,6 +1,6 @@
 #define GL_GLEXT_PROTOTYPES
 #define DISPLAY_MOUSE_INFO "Mouse control information here?"
-#define DISPLAY_KEY_INFO "Keyboard control information here?"
+#define DISPLAY_KEY_INFO "F1-F3: Turn head | F4: Default LookAt | F5-F12: Change camera position"
 
 #include <stdlib.h>  // Useful for the following includes.
 #include <stdio.h>
@@ -18,15 +18,27 @@ int Window_Width = 800;
 int Window_Height = 600;
 
 // character starting position variables
-enum direction {negZ = 0, posX = 1, posZ = 2, negX = 3} dir = negZ; // direction the robot is facing
+enum direction {NEG_Z = 0, POS_X = 1, POS_Z = 2, NEG_X = 3} dir = NEG_Z; // direction the robot body is facing/moving
+direction headDir = NEG_Z; // direction the robot head is facing
 float charX = 0.0f;
 float charY = 0.0f;
 float charZ = 0.0f;
+float antennaRotate = 30.0;
 
-// eye variables
+// camera eye variables
 float eyex = -0.5f;
 float eyey = 2.0f;
 float eyez = 2.0f;
+
+//camera at variables
+float atx = 0;
+float aty = 1;
+float atz = 0;
+
+float xCoord = 2;
+float zCoord = -3;
+
+void drawBuildings();
 
 // Function for string rendering
 static void PrintString(void *font, char *str) {
@@ -107,7 +119,7 @@ void drawStreet() {
     glRotatef(90, 0.0, 1.0, 0.0);
 
     glPushMatrix();
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef(4*i, 0.0f, 0.0f);
         for (float j = 0.0f; j < 20; j++) {
@@ -122,7 +134,7 @@ void drawStreet() {
     glPopMatrix();
 
     glPushMatrix();
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef(0.0f, 0.0f, 4*i);
         glRotatef(90,0.0,1.0,0.0);
@@ -141,13 +153,24 @@ void drawStreet() {
     // outer roads
     glPushMatrix();
     glTranslatef(0.0f, 0.00f, -4);
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
         glTranslatef(0.0f, -0.03f, -4*i);
         drawOuterRoad();
         glPopMatrix();
     }
     glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.0f, 0.00f, -4);
+    for (float i = 0.0f; i <= 20; i++) {
+        glPushMatrix();
+        glTranslatef(80.0f, 0.01f, -4*i);
+        drawOuterRoad();
+        glPopMatrix();
+    }
+    glPopMatrix();
+
     for (float i = 0.0f; i < 20; i++) {
         glPushMatrix();
         glTranslatef(4*i, 0.0f, 0.0f);
@@ -156,35 +179,31 @@ void drawStreet() {
         glPopMatrix();
     }
 
-    // need to double check this when movement is implemented
-    glPushMatrix();
-    glTranslatef(-40.0f, 0.0f, -40.0f);
-    glRotatef(180, 0.0, 1.0, 0.0);
-    glTranslatef(40.0f, 0.0f, 40.0f);
-    glPushMatrix();
-    glTranslatef(0.0f, 0.00f, -4);
-    for (float i = 0.0f; i < 20; i++) {
+    for (float i = 0.0f; i <= 20; i++) {
         glPushMatrix();
-        glTranslatef(0.0f, -0.03f, -4*i);
-        drawOuterRoad();
-        glPopMatrix();
-    }
-    glPopMatrix();
-    for (float i = 0.0f; i < 20; i++) {
-        glPushMatrix();
-        glTranslatef(4*i, 0.0f, 0.0f);
+        glTranslatef((i*4.0f)-1, 0.0f, -80.0f);
         glRotatef(90,0.0,1.0,0.0);
         drawOuterRoad();
         glPopMatrix();
     }
-    glPopMatrix();
-    glPopMatrix();
 }
 
 // Draw buildings
 void drawBuildings() {
-    glTranslatef(2, 0, -3);  // inital translate for the first block
-    CreateBlock();           // create a block
+	    glPushMatrix();
+	    glTranslatef(2, 0, -3);
+    for (int i = 0; i < 80; i+=4) {
+	    glPushMatrix();
+        for (int j = 0; j < 80; j+=4) { 
+             glPushMatrix();
+	     glTranslatef(j, 0, -i);
+	     CreateBlock();
+	     //glutSolidCube(1);
+             glPopMatrix();
+	} 
+	     glPopMatrix();
+    }
+	glPopMatrix();
 }
 
 // Draw Cube
@@ -300,15 +319,30 @@ void drawRobot() {
     * Adding in parts from the bottom up and translating
     * parts to the proper location.
     */
+    glPushMatrix();
+    glTranslatef(charX, charY, charZ);
+    switch (dir) {
+        case NEG_Z:
+            glRotatef(0, 0.0, 1.0, 0.0);
+            break;
+        case POS_X:
+            glRotatef(90, 0.0, 1.0, 0.0);
+            break;
+        case POS_Z:
+            glRotatef(180, 0.0, 1.0, 0.0);
+            break;
+        case NEG_X:
+            glRotatef(270, 0.0, 1.0, 0.0);
+            break;
+    }
     // draw body
     glPushMatrix();
-    glTranslatef(charX, charY + 0.5f, charZ);
+    glTranslatef(0, 0.5f, 0);
     glScalef(0.5f, 1.0f, 0.5f);
     drawCube(0.5f);
     glPopMatrix();
 
-    glTranslatef(charX, charY, charZ);
-    // draw body details
+    // draw chest square
     glBegin(GL_POLYGON);
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     glVertex3f(0.2f, 0.8f, -0.26f);
@@ -317,6 +351,8 @@ void drawRobot() {
     glVertex3f(0.2f, 0.2f, -0.26f);
     glEnd();
 
+    // draw back triangles
+    glPushMatrix();
     glBegin(GL_TRIANGLES);
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.85f , 0.26f);
@@ -325,7 +361,6 @@ void drawRobot() {
     glEnd();
 
     glBegin(GL_TRIANGLES);
-    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.55f , 0.26f);
     glVertex3f(0.2f, 0.25f, 0.26f);
     glVertex3f(-0.2f, 0.25f, 0.26f);
@@ -334,18 +369,33 @@ void drawRobot() {
 
     // draw neck
     glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 0.0f);
+    glTranslatef(0.0, 1.0f, 0.0);
     glRotatef(-90, 1.0f, 0.0f, 0.0f);
     drawCylinder(0.15f, 0.15f, 0.09f, 1.0f, 0.5f, 1.0f);
     glPopMatrix();
 
     // draw head
     glPushMatrix();
+    switch (headDir) {
+        case NEG_Z:
+            glRotatef(0, 0.0, 1.0, 0.0);
+            break;
+        case POS_X:
+            glRotatef(-90, 0.0, 1.0, 0.0);
+            break;
+        case POS_Z:
+            glRotatef(180, 0.0, 1.0, 0.0);
+            break;
+        case NEG_X:
+            glRotatef(-270, 0.0, 1.0, 0.0);
+            break;
+    }
+    glPushMatrix();
     glTranslatef(0.0f, 1.25f, 0.0f);
     drawCube(0.16f);
     glPopMatrix();
 
-    // draw eyes and antenna
+    // draw eyes
     glPushMatrix();
     glTranslatef(-0.07f, 1.26f, -0.18f);
     glutSolidSphere(0.04, 20, 20);
@@ -356,10 +406,15 @@ void drawRobot() {
     glutSolidSphere(0.04, 20, 20);
     glPopMatrix();
 
+    // draw antenna
     glPushMatrix();
-    glTranslatef(0.0f, 1.28f, 0.0f);
+    glTranslatef(0.0, 1.28f, 0.0);
     glRotatef(-90, 1, 0, 0);
+    glRotatef(antennaRotate, 0, 0, 1);
+    glTranslatef(0.05, 0.0, 0.0);
     drawCylinder(0.05f, 0.05f, 0.3f, 0.0f, 1.0f, 1.0f);
+    glPopMatrix();
+    glPopMatrix();
     glPopMatrix();
 }
 
@@ -416,34 +471,58 @@ void keyboardCallback(unsigned char key, int x, int y) {
         glutDestroyWindow(Window_ID);
         exit(1);
     }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if (key == 'z') { // push the robot forward
         switch (dir) {
-        case negZ:
-            charZ -= 0.2;
+	    case NEG_Z:
+            if (charZ >= -81) {
+                charZ -= 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atz = charZ;
+            }
             break;
-        case posZ:
-            charZ += 0.2;
+        case POS_Z:
+            if (charZ <= 0) {
+                charZ += 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atz = charZ;
+            }
             break;
-        case negX:
-            charX -= 0.2;
+        case NEG_X:
+            if (charX <= 81) {
+                charX += 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atx = charX;
+            }
             break;
-        case posX:
-            charX += 0.2;
+        case POS_X:
+            if (charX >= -.5) {
+                charX -= 0.2;
+                eyex = charX - 0.5;
+                eyey = charY + 2.0;
+                eyez = charZ + 2.0;
+                atx = charX;
+            }
             break;
         }
         //TODO: set boundaries so robot cant walk off map
     }
-    else if (key == 'a') { // turn robot left if at an intersection
+    else if (key == 'a') { // turn robot right if at an intersection
         if (dir == 0)
-            dir = negX;
+            dir = NEG_X;
         else
             dir = direction((int)dir - 1);
         //TODO check if robot is at an intersection
     }
-    else if (key == 'q') { // turn robot right if at an intersection
+    else if (key == 'q') { // turn robot left if at an intersection
         if (dir == 3)
-            dir = negZ;
+            dir = NEG_Z;
         else
             dir = direction((int)dir + 1);
         //TODO check if robot is at an intersection
@@ -460,44 +539,120 @@ void keyboardCallback(unsigned char key, int x, int y) {
 
 // function bindings
 void functionCallback(int key, int x, int y) {
-    if (key == GLUT_KEY_F1) { // turn robot head to face forward (default)
-        //TODO
+   if (key == GLUT_KEY_F1){ // turn robot head to face forward (default)
+        headDir = dir;
     }
-    else if (key == GLUT_KEY_F2) { // turn head right
-        //TODO
+    else if (key == GLUT_KEY_F2) { // HOLD to turn head right
+        {
+            if (headDir == 3)
+                headDir = NEG_Z;
+            else
+                headDir = direction((int)dir + 1);
+        }
     }
-    else if (key == GLUT_KEY_F3) { // turn head right
-        //TODO
+    else if (key == GLUT_KEY_F3) { // HOLD to turn head left
+        if (headDir == 0)
+            headDir = NEG_X;
+        else
+            headDir = direction((int)dir - 1);
     }
     else if (key == GLUT_KEY_F4) { // return to default LookAt setting
-        //TODO
+       //TODO
+       eyex = - 0.5;
+       eyey = 2.0;
+       eyez = 2.0;
+       atx = 0;
+       aty = 0;
+       atz = 0;
     }
     else if (key == GLUT_KEY_F5) { // back left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 1;
+       eyey = charY + 2;
+       eyez = charZ - 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F6) { // back right LookAt
-        //TODO
+       //TODO
+        eyex = charX - 1;
+       eyey = charY + 2;
+       eyez = charZ - 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F7) { // front left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 1;
+       eyey = charY + 2;
+       eyez = charZ + 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F8) { // front right LookAt
-        //TODO
+       //TODO
+        eyex = charX - 1;
+       eyey = charY + 2;
+       eyez = charZ + 1;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F9) { // further back left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 2;
+       eyey = charY + 2;
+       eyez = charZ - 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F10) { // further back right LookAt
-        //TODO
+       //TODO
+        eyex = charX - 2;
+       eyey = charY + 2;
+       eyez = charZ - 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F11) { // further front left LookAt
-        //TODO
+       //TODO
+       eyex = charX + 2;
+       eyey = charY + 2;
+       eyez = charZ + 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else if (key == GLUT_KEY_F12) { // further front right LookAt
-        //TODO
+       //TODO
+       eyex = charX - 2;
+       eyey = charY + 2;
+       eyez = charZ + 2;
+       atx = charX;
+       aty = charY;
+       atz = charZ;
     }
     else { // face forward
         //TODO
+    }
+}
+
+void functionUpCallback(int key, int x, int y) {
+    switch (key) {
+        case GLUT_KEY_F2: // release F2 : return head facing with body
+            headDir = dir;
+            break;
+        case GLUT_KEY_F3: // release F3
+            headDir = dir;
+            break;
+        default:
+            printf("No action for %d", key);
+            break;
     }
 }
 
@@ -518,25 +673,31 @@ void display(void) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
     // Set up camera
-	gluLookAt(eyex,eyey,eyez,0.0,0.0,0.0,0.0,1.0,0.0);
+	gluLookAt(eyex,eyey,eyez,atx,aty,atz,0.0,1.0,0.0);
+
+	drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
 
     // draw street
     drawStreet();
 
+
     // Draw Robot Character
+    glPushMatrix();
     drawRobot();
-    
+    glPopMatrix();
+
+    glPushMatrix();
     // draw the buildings
     drawBuildings();
+    glPopMatrix();
 
-    drawAxisLines(-1.0f, 5.0f, -1.0f, 5.0f, -1.0f, 5.0f); // Draw axis lines to help visualize 3D space
 
     // Display help string
     glPushMatrix();
     glLoadIdentity();
     glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
     glColor4f(0.6,1.0,0.6,1.00);
-    sprintf(buf,"%s", DISPLAY_MOUSE_INFO); // Print the string into a buffer
+    sprintf(buf,"Character location: (%.2f,%.2f,%.2f)", charX, charY, charZ); // Print the string into a buffer
     glWindowPos2i(3,20);                         // Set the coordinate
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
@@ -544,6 +705,7 @@ void display(void) {
     PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
     glPopMatrix();
 
+    antennaRotate += 30.0;
 	glutSwapBuffers();
 }
 
@@ -559,7 +721,9 @@ int main(int argc, char** argv)
 
     glutMouseFunc(mouseCallback);
     glutKeyboardFunc(keyboardCallback);
+    //glutKeyboardUpFunc(); // checks for when keys are released
     glutSpecialFunc(functionCallback);
+    glutSpecialUpFunc(functionUpCallback); // checks for when Function keys are released
 
 	glEnable(GL_DEPTH_TEST); // enable depth testing
     //glCullFace(GL_BACK);

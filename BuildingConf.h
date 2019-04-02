@@ -1,6 +1,6 @@
 /**
  * Create buildings to render onto the grid
- * @author Jayden Stoll
+ * @author Jayden Stoll, Chris Toth
  * @date March 24, 2019
  */
 
@@ -24,23 +24,23 @@ void drawCylinder(float base = 0.5f, float top = 0.5f, float height = 1.0f,
 }
 
 
-void CreateBlock() {
+void CreateBlock() 
+{
+    glPushMatrix();
     RGBColour rgb = {1.0, 0.0, 0.0};
     RGBColour rgb1 = {0.0, 0.0, 0.0};
-    glTranslatef(0,0,0);
     CreateTallBuilding(rgb);
-    //glTranslatef(-1, 0, 1);
-    //CreateShortBuilding(rgb1);
-    //glTranslatef(-1, 1, 2);
-    //drawCylinder();
+    glTranslatef(0.7, 0, 0.7);
+    CreateShortBuilding(rgb1);
+    glPopMatrix();
 }
 
  void CreateTallBuilding(struct RGBColour rgb) {
-    CreateRect(2, 0.25, rgb.R, rgb.G, rgb.B);
+    CreateRect(5, 1, rgb.R, rgb.G, rgb.B);
 }
 
  void CreateShortBuilding(struct RGBColour rgb) {
-    CreateRect(0.7, 0.25, rgb.R, rgb.G, rgb.B);
+    CreateRect(2, 0.25, rgb.R, rgb.G, rgb.B);
  }
 
 /**
@@ -50,37 +50,9 @@ void CreateBlock() {
  * @param rgb, the rgb colour of the building
  */
 void CreateRect(float height, float width, float r, float g, float b) {
-    glRotatef(-90, 1, 0, 0);
-    glBegin(GL_QUADS);
-      glColor3f(r, g, b);
-      glVertex3f( width, height, -1.0f);
-      glVertex3f(-width, height, -1.0f);
-      glVertex3f(-width, height,  1.0f);
-      glVertex3f( width, height,  1.0f);
-
-      glVertex3f( width, -height,  1.0f);
-      glVertex3f(-width, -height,  1.0f);
-      glVertex3f(-width, -height, -1.0f);
-      glVertex3f( width, -height, -1.0f);
-
-      glVertex3f( width,  height, 1.0f);
-      glVertex3f(-width,  height, 1.0f);
-      glVertex3f(-width, -height, 1.0f);
-      glVertex3f( width, -height, 1.0f);
-      glVertex3f( width, -height, -1.0f);
-      glVertex3f(-width, -height, -1.0f);
-      glVertex3f(-width,  height, -1.0f);
-      glVertex3f( width,  height, -1.0f);
-
-      glVertex3f(-width,  height,  1.0f);
-      glVertex3f(-width,  height, -1.0f);
-      glVertex3f(-width, -height, -1.0f);
-      glVertex3f(-width, -height,  1.0f);
-
-      glVertex3f(width,  height, -1.0f);
-      glVertex3f(width,  height,  1.0f);
-      glVertex3f(width, -height,  1.0f);
-      glVertex3f(width, -height, -1.0f);
-    glEnd();
+    glPushMatrix();
+    glColor3f(r, g, b);
+    glScalef(width, height, width);
+    glutSolidCube(1);
     glPopMatrix();
 }
