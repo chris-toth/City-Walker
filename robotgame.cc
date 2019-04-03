@@ -1,3 +1,8 @@
+/* Interactive Robot Game
+ * CPSC 3710 Final Project
+ * Apr. 3, 2019
+ * By: Eric Mu, Chris Toth, Jayden Stoll, Qi Guo */
+
 #define GL_GLEXT_PROTOTYPES
 #define DISPLAY_KEY_INFO2 "Z: Move Forward | A: Turn Right | Q: Turn Left | P: Pause | O: Toggle Ortho | X: Exit"
 #define DISPLAY_KEY_INFO "F1-F3: Turn head | F4: Default LookAt | F5-F12: Change camera position"
@@ -505,9 +510,9 @@ void drawAxisLines(float xMin, float xMax, float yMin, float yMax, float zMin, f
 // mouse bindings
 void mouseCallback(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) { // destroy a building
-        //TODO
+
     } else {
-        //TODO
+
     }
 }
 
