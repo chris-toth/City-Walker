@@ -28,6 +28,7 @@ float charX = 0.0f;
 float charY = 0.0f;
 float charZ = 0.0f;
 float antennaRotate = 30.0;
+float antennaSpeed = 30.0;
 
 // camera eye variables
 float eyex = -0.5f;
@@ -51,6 +52,31 @@ static void PrintString(void *font, char *str) {
 
    for(i=0;i < len; i++)
       glutBitmapCharacter(font,*str++);
+}
+
+// helper function to check if robot is standing in an intersection
+bool atIntersection(float x, float z) {
+  bool xAt = 0;
+  bool zAt = 0;
+
+  vector<float> allowedX;
+  for (float i = 0; i <= 84; i=i+4.00f) {
+    allowedX.push_back(i);
+  }
+  vector<float> allowedZ;
+  for (float i = -1; i >= -84; i=i-4.00) {
+    allowedZ.push_back(i);
+  }
+
+  for (unsigned int i = 0; i < allowedX.size(); i++) {
+    if (x > (allowedX[i] - 0.40) && x < (allowedX[i] + 0.40))
+      xAt = true;
+  }
+  for (unsigned int i = 0; i < allowedZ.size(); i++) {
+    if (z > (allowedZ[i] - 0.40) && z < (allowedZ[i] + 0.40))
+      zAt = true;
+  }
+  return xAt && zAt;
 }
 
 //******************************************************//
@@ -153,6 +179,17 @@ void drawStreet() {
         glPopMatrix();
     }
     drawGrass();
+
+    glPushMatrix();
+    glColor3f(0.20f,0.25f,0.10f);
+    glBegin(GL_QUADS);
+        glVertex3f(-180.0f,-0.1f,180.00f);
+        glVertex3f(180.0f,-0.1f,180.00f);
+        glVertex3f(180.0f,-0.1f,-180.00f);
+        glVertex3f(-180.0f,-0.1f,-180.00f);
+    glEnd();
+    glPopMatrix();
+
     glPopMatrix();
 
     // outer roads
@@ -359,7 +396,11 @@ void drawRobot() {
     // draw back triangles
     glPushMatrix();
     glBegin(GL_TRIANGLES);
-    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+    // green indicates OK to turn
+    if (atIntersection(charX, charZ))
+        glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+    else
+        glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.85f , 0.26f);
     glVertex3f(0.2f, 0.55f, 0.26f);
     glVertex3f(-0.2f, 0.55f, 0.26f);
@@ -470,31 +511,6 @@ void mouseCallback(int button, int state, int x, int y) {
     }
 }
 
-// helper function to check if robot is standing in an intersection
-bool atIntersection(float x, float z) {
-  bool xAt = 0;
-  bool zAt = 0;
-
-  vector<float> allowedX;
-  for (float i = 0; i <= 84; i=i+4.00f) {
-    allowedX.push_back(i);
-  }
-  vector<float> allowedZ;
-  for (float i = -1; i >= -84; i=i-4.00) {
-    allowedZ.push_back(i);
-  }
-
-  for (unsigned int i = 0; i < allowedX.size(); i++) {
-    if (x > (allowedX[i] - 0.40) && x < (allowedX[i] + 0.40))
-      xAt = true;
-  }
-  for (unsigned int i = 0; i < allowedZ.size(); i++) {
-    if (z > (allowedZ[i] - 0.40) && z < (allowedZ[i] + 0.40))
-      zAt = true;
-  }
-  return xAt && zAt;
-}
-
 // keyboard bindings
 void keyboardCallback(unsigned char key, int x, int y) {
   if (paused == 0) {
@@ -575,10 +591,14 @@ void keyboardCallback(unsigned char key, int x, int y) {
     }
   }
     if (key == 'p') { // pause the game
-        if (paused == 1)
+        if (paused == 1) {
           paused = 0;
-        else
+          antennaSpeed = 30;
+        }
+        else {
           paused = 1;
+          antennaSpeed = 0;
+        }
     }
     if (key == 'x'){
         glutDestroyWindow(Window_ID);
@@ -737,18 +757,29 @@ void display(void) {
     glLoadIdentity();
     glOrtho(0,Window_Width,0,Window_Height,-1.0,1.0);
     glColor4f(0.6,1.0,0.6,1.00);
-    sprintf(buf,"%s", DISPLAY_KEY_INFO2); // Print the string into a buffer
-    glWindowPos2i(3,5);                         // Set the coordinate
-    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
-    sprintf(buf,"Character location: (%.2f,%.2f,%.2f), At intersection: %i, Paused: %i", charX, charY, charZ, atIntersection(charX,charZ), paused); // Print the string into a buffer
-    glWindowPos2i(3,580);                         // Set the coordinate
-    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
-    sprintf(buf,"%s", DISPLAY_KEY_INFO); // Print the string into a buffer
-    glWindowPos2i(3,20);                         // Set the coordinate
-    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  // Display the string.
+
+    sprintf(buf,"%s", DISPLAY_KEY_INFO2); 
+    glWindowPos2i(3,5);                     
+    PrintString(GLUT_BITMAP_HELVETICA_12, buf);  
+
+    sprintf(buf,"Character location: (%.2f,%.2f,%.2f)", charX, charY, charZ); // Print the string into a buffer
+    glWindowPos2i(3,580);                         
+    PrintString(GLUT_BITMAP_HELVETICA_12, buf); 
+
+    sprintf(buf,"%s", DISPLAY_KEY_INFO); 
+    glWindowPos2i(3,20);                     
+    PrintString(GLUT_BITMAP_HELVETICA_12, buf); 
+    
+    // display pause
+    if (paused) {
+        glColor3f(0.0f, 1.0f, 0.0f);
+        sprintf(buf,"GAME IS PAUSED"); 
+        glWindowPos2i(300,500);                      
+        PrintString(GLUT_BITMAP_TIMES_ROMAN_24, buf);  
+    }
     glPopMatrix();
 
-    antennaRotate += 30.0;
+    antennaRotate += antennaSpeed;
 	glutSwapBuffers();
 }
 
